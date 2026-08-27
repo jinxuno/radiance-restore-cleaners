@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# Bing and Google both read this
 Sitemap: https://www.radiancerestore.org/sitemap.xml
