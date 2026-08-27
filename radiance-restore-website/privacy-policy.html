@@ -69,7 +69,7 @@
   .area-btns{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px;}
   .area-btns a{ display:flex; align-items:center; justify-content:center; text-align:center;
     background:#fff; border:1.5px solid var(--accent-soft); border-radius:12px;
-    padding:16px 14px; font-size:14.5px; font-weight:700; color:var(--ink);
+    padding:16px 10px; font-size:13.5px; font-weight:700; color:var(--ink);
     transition:transform .15s ease, box-shadow .15s ease, background .15s ease;}
   .area-btns a:hover{ background:var(--accent-strong); border-color:var(--accent-strong); color:#fff;
     transform:translateY(-2px); box-shadow:0 14px 26px -14px rgba(255,77,109,.75);}
@@ -84,6 +84,40 @@
   .navlinks a:hover{ color: var(--accent-strong);}
   .navcta{ display:flex; align-items:center; gap:14px;}
   .phone-link{ font-weight:700; color: var(--ink); font-size:14.5px;}
+
+
+  .nav-toggle{ display:none; align-items:center; justify-content:center; width:44px; height:44px;
+    border:1.5px solid var(--accent-soft); background:#fff; border-radius:12px; cursor:pointer; padding:0;}
+  .nav-toggle:hover{ background:var(--card);}
+  .nav-toggle:focus-visible{ outline:3px solid var(--accent-strong); outline-offset:2px;}
+  .nav-toggle span{ display:block; width:20px; height:2px; background:var(--ink); border-radius:2px;
+    position:relative; transition:transform .2s ease, background .2s ease;}
+  .nav-toggle span::before,.nav-toggle span::after{ content:""; position:absolute; left:0; width:20px; height:2px;
+    background:var(--ink); border-radius:2px; transition:transform .2s ease, top .2s ease;}
+  .nav-toggle span::before{ top:-6px;} .nav-toggle span::after{ top:6px;}
+  .nav-toggle[aria-expanded="true"] span{ background:transparent;}
+  .nav-toggle[aria-expanded="true"] span::before{ top:0; transform:rotate(45deg);}
+  .nav-toggle[aria-expanded="true"] span::after{ top:0; transform:rotate(-45deg);}
+  .mobile-menu{ display:none; border-top:1px solid var(--accent-soft); background:rgba(255,240,243,.99);
+    max-height:calc(100vh - 84px); overflow-y:auto; -webkit-overflow-scrolling:touch;}
+  .mobile-menu.open{ display:block;}
+  .mobile-menu .mm-inner{ max-width:1160px; margin:0 auto; padding:18px 24px 26px;}
+  .mobile-menu h3{ font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent-strong); margin:18px 0 8px;}
+  .mobile-menu .mm-group:first-child h3{ margin-top:4px;}
+  .mobile-menu a{ display:block; padding:11px 2px; font-size:15.5px; font-weight:600; color:var(--ink-soft);
+    border-bottom:1px solid var(--accent-soft);}
+  .mobile-menu a:hover{ color:var(--accent-strong);}
+  .mobile-menu .mm-cta{ display:flex; flex-direction:column; gap:10px; margin-top:22px;}
+  .mobile-menu .mm-cta a{ border-bottom:none; text-align:center; padding:14px 20px; border-radius:999px; font-size:15px;}
+  .mobile-menu .mm-call{ background:#fff; border:1.5px solid var(--ink); color:var(--ink);}
+  .mobile-menu .mm-book{ background:var(--book-bg); color:#fff;}
+  @media (max-width:880px){
+    .nav-toggle{ display:inline-flex;}
+    .phone-link{ display:none;}
+    .navcta{ gap:10px;}
+  }
+  @media (min-width:881px){ .mobile-menu{ display:none !important;} }
 
   /* HERO */
   .hero{
@@ -151,6 +185,7 @@
   /* WHY CHOOSE US */
   .why{ padding: 64px 0; background: var(--card); }
   .why-intro{ display:grid; grid-template-columns: 280px 1fr; gap:36px; align-items:center; margin-bottom:8px;}
+  @media (max-width:760px){ .why-intro{ grid-template-columns:1fr; gap:20px; text-align:center;} }
   .why-photo{ width:100%; height:220px; object-fit:cover; border-radius:18px; box-shadow: 0 20px 40px -20px rgba(89,13,34,.35);}
   .why-lead{ font-size:15px; color: var(--ink-soft); margin-top:8px; max-width:560px;}
   .why-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top:36px;}
@@ -378,8 +413,38 @@
       <div class="navcta">
         <a class="phone-link" href="tel:+15615565899">(561) 556-5899</a>
         <a class="btn btn-book" href="/book-with-us-today.html">Book Now</a>
+        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span></span></button>
       </div>
     </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mm-inner">
+      <div class="mm-group"><h3>Services</h3>
+        <a href="/standard-cleaning.html">Standard Cleaning</a>
+        <a href="/deep-cleaning.html">Deep Cleaning</a>
+        <a href="/move-in-out-cleaning.html">Move-In / Move-Out Cleaning</a>
+        <a href="/airbnb-cleaning.html">Airbnb / VRBO Cleaning</a>
+        <a href="/post-construction-cleaning.html">Post-Construction Cleaning</a>
+      </div>
+      <div class="mm-group"><h3>About Us</h3>
+        <a href="/about-us.html">About Our Team</a>
+        <a href="/our-work.html">Our Work</a>
+        <a href="/cleaning-guides">Blog</a>
+      </div>
+      <div class="mm-group"><h3>Service Areas</h3>
+        <a href="/palm-beach-house-cleaning.html">House Cleaning in Palm Beach</a>
+        <a href="/port-st-lucie-house-cleaning.html">House Cleaning in Port St. Lucie</a>
+        <a href="/fort-pierce-house-cleaning.html">House Cleaning in Fort Pierce</a>
+      </div>
+      <div class="mm-group"><h3>More</h3>
+        <a href="/contact.html">Contact</a>
+        <a href="/we-are-hiring.html">We&#39;re Hiring</a>
+      </div>
+      <div class="mm-cta">
+        <a class="mm-call" href="tel:+15615565899">Call (561) 556-5899</a>
+        <a class="mm-book" href="/book-with-us-today.html">Book Now</a>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -494,6 +559,22 @@
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+<script>
+(function(){
+  var t=document.getElementById('navToggle'), m=document.getElementById('mobileMenu');
+  if(!t||!m) return;
+  function set(open){
+    t.setAttribute('aria-expanded', open?'true':'false');
+    t.setAttribute('aria-label', open?'Close menu':'Open menu');
+    m.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  t.addEventListener('click', function(){ set(t.getAttribute('aria-expanded')!=='true'); });
+  m.addEventListener('click', function(e){ if(e.target.tagName==='A') set(false); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') set(false); });
+  window.addEventListener('resize', function(){ if(window.innerWidth>880) set(false); });
+})();
 </script>
 </body>
 </html>
