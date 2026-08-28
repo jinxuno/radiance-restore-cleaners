@@ -102,9 +102,9 @@
     max-height:calc(100vh - 84px); overflow-y:auto; -webkit-overflow-scrolling:touch;}
   .mobile-menu.open{ display:block;}
   .mobile-menu .mm-inner{ max-width:1160px; margin:0 auto; padding:18px 24px 26px;}
-  .mobile-menu h3{ font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em;
+  .mobile-menu .mm-label{ font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em;
     text-transform:uppercase; color:var(--accent-strong); margin:18px 0 8px;}
-  .mobile-menu .mm-group:first-child h3{ margin-top:4px;}
+  .mobile-menu .mm-group:first-child .mm-label{ margin-top:4px;}
   .mobile-menu a{ display:block; padding:11px 2px; font-size:15.5px; font-weight:600; color:var(--ink-soft);
     border-bottom:1px solid var(--accent-soft);}
   .mobile-menu a:hover{ color:var(--accent-strong);}
@@ -143,7 +143,7 @@
     border: 1px solid rgba(255,255,255,.35);
     text-align:left;
   }
-  .lead-card h3{ font-size: 21px; margin-bottom: 6px; color:#fff;}
+  .lead-card h2{ font-size: 21px; margin-bottom: 6px; color:#fff;}
   .lead-card p.small{ font-size: 13.5px; color: #ffe1e8; margin-bottom: 22px;}
   .field{ margin-bottom: 14px;}
   .field label{ display:block; font-size: 12.5px; font-weight:700; margin-bottom:6px; color: #fff;}
@@ -191,7 +191,7 @@
   .why-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top:36px;}
   .why-item{ background:#fff; padding: 26px; border-radius:16px; }
   .why-item .num{ font-family: var(--serif); font-size: 26px; color: var(--accent-strong); margin-bottom:10px;}
-  .why-item h4{ font-family: var(--sans); font-size:16px; font-weight:700; color: var(--ink); margin-bottom:6px;}
+  .why-item h3{ font-family: var(--sans); font-size:16px; font-weight:700; color: var(--ink); margin-bottom:6px;}
   .why-item p{ font-size: 14px; color: var(--ink-soft);}
 
   /* SERVICES */
@@ -242,6 +242,10 @@
   .stars{ color: var(--accent-strong); font-size:14px; margin-bottom:12px; letter-spacing:2px;}
   .t-card p{ font-size:14.5px; color: var(--ink-soft); margin-bottom:16px;}
   .t-name{ font-size:13.5px; font-weight:700; color: var(--ink);}
+  .t-src{ display:block; font-weight:600; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); opacity:.75; margin-top:3px;}
+  .rev-note{ text-align:center; margin-top:26px; font-size:13.5px; color:var(--ink-soft);}
+  .rev-note a{ color:var(--accent-strong); font-weight:700; text-decoration:underline;}
+
 
   /* GUARANTEE */
   .guarantee{ padding: 72px 0; background: var(--ink); color: #fff;}
@@ -296,7 +300,7 @@
     border-radius:20px; padding:26px; box-shadow:0 24px 48px -20px rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.35);
     text-align:left; max-width:420px; margin:0 auto;
   }
-  .mini-card h3{ color:#fff; font-size:18px; margin-bottom:14px; text-align:center;}
+  .mini-card h2{ color:#fff; font-size:18px; margin-bottom:14px; text-align:center;}
   .content-section{ padding:56px 0;}
   .content-section.alt{ background: var(--card);}
   .content-section h2{ font-size:26px; margin-bottom:18px;}
@@ -305,7 +309,7 @@
   .checklist li{ font-size:14.5px; color:var(--ink-soft); padding:8px 0 8px 28px; position:relative; border-bottom:1px solid var(--accent-soft);}
   .checklist li::before{ content:"✓"; position:absolute; left:0; color:var(--accent-strong); font-weight:700;}
   .checklist-group{ margin-top:20px;}
-  .checklist-group h4{ font-family:var(--sans); font-size:14px; font-weight:700; color:var(--ink); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;}
+  .checklist-group h3{ font-family:var(--sans); font-size:14px; font-weight:700; color:var(--ink); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;}
   .includes-note{ background:var(--card); border-left:4px solid var(--accent-strong); border-radius:8px; padding:14px 18px; margin-bottom:20px; font-size:14.5px; color:var(--ink); font-weight:700;}
   .diff-box{ background:#fff; border:2px solid var(--accent-strong); border-radius:16px; padding:24px; margin-top:24px;}
   .diff-box h3{ font-size:17px; margin-bottom:12px;}
@@ -419,24 +423,24 @@
   </div>
   <div class="mobile-menu" id="mobileMenu">
     <div class="mm-inner">
-      <div class="mm-group"><h3>Services</h3>
+      <div class="mm-group"><div class="mm-label">Services</div>
         <a href="/standard-cleaning.html">Standard Cleaning</a>
         <a href="/deep-cleaning.html">Deep Cleaning</a>
         <a href="/move-in-out-cleaning.html">Move-In / Move-Out Cleaning</a>
         <a href="/airbnb-cleaning.html">Airbnb / VRBO Cleaning</a>
         <a href="/post-construction-cleaning.html">Post-Construction Cleaning</a>
       </div>
-      <div class="mm-group"><h3>About Us</h3>
+      <div class="mm-group"><div class="mm-label">About Us</div>
         <a href="/about-us.html">About Our Team</a>
         <a href="/our-work.html">Our Work</a>
         <a href="/cleaning-guides">Blog</a>
       </div>
-      <div class="mm-group"><h3>Service Areas</h3>
+      <div class="mm-group"><div class="mm-label">Service Areas</div>
         <a href="/palm-beach-house-cleaning.html">House Cleaning in Palm Beach</a>
         <a href="/port-st-lucie-house-cleaning.html">House Cleaning in Port St. Lucie</a>
         <a href="/fort-pierce-house-cleaning.html">House Cleaning in Fort Pierce</a>
       </div>
-      <div class="mm-group"><h3>More</h3>
+      <div class="mm-group"><div class="mm-label">More</div>
         <a href="/contact.html">Contact</a>
         <a href="/we-are-hiring.html">We&#39;re Hiring</a>
       </div>
@@ -458,37 +462,37 @@
     
 <p>These Terms and Conditions ("Terms") govern your use of the Radiance Restore Cleaners website and your booking of cleaning services. Radiance Restore Cleaners is a service mark of Radiance Restore LLC, a Florida limited liability company ("Radiance Restore LLC," "we," "us," or "our"). By booking a service, submitting a quote request, or otherwise using this website, you agree to these Terms.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">1. Services</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">1. Services</h2>
 <p>Radiance Restore LLC provides residential and short-term rental cleaning services under the name Radiance Restore Cleaners, including Standard Cleaning, Deep Cleaning, Move-In/Move-Out Cleaning, Airbnb/VRBO Cleaning, and Post-Construction Cleaning, as described on our website. The specific tasks included in each service are listed on the corresponding service page and may be updated from time to time. Services are performed in a professional manner consistent with industry standards, and our team is insured for the work performed.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">2. Quotes and Pricing</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">2. Quotes and Pricing</h2>
 <p>Instant price estimates provided through our online calculator are estimates only, based on the service type, square footage, and frequency you select. Final pricing may vary based on an in-person or more detailed assessment of the property's condition. Add-on services are quoted separately and are not included in the calculator's estimate. Quotes are valid for 7 days from the date provided.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">3. Recurring Cleaning Plans</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">3. Recurring Cleaning Plans</h2>
 <p>Weekly, bi-weekly, and monthly cleaning plans automatically continue at the discounted rate shown at booking until cancelled. You may cancel or reschedule a recurring plan by contacting us at least 48 hours before your next scheduled visit. Discounted recurring pricing applies only while the plan remains active; switching to a one-time visit removes the recurring discount for that visit.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">4. Booking and Cancellation</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">4. Booking and Cancellation</h2>
 <p>Appointments may be booked online or by phone. We request at least 24 hours notice for cancellations or rescheduling. Cancellations made with less notice may be subject to a cancellation fee of 50% of the scheduled service cost. If a deposit was collected to hold your appointment, your deposit is non-refundable but fully transferable — we'll gladly apply it toward a rescheduled visit within 30 days, so nothing goes to waste.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">5. Access to Property and Completion of Service</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">5. Access to Property and Completion of Service</h2>
 <p>You are responsible for providing safe and legal access to the property at the scheduled appointment time. For Move-In/Move-Out Cleaning specifically, the property must be vacant with electricity and water currently on. While you are welcome to be present before or after a visit to review the work, if no one is available at the conclusion of a visit, the service will be considered completed and accepted as performed.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">6. Satisfaction Guarantee</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">6. Satisfaction Guarantee</h2>
 <p>If you are not satisfied with any part of a completed cleaning, contact us within 24 hours and we will return to address the issue at no additional charge. This guarantee does not cover pre-existing damage, normal wear and tear, or work outside the original scope of service.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">7. Payment</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">7. Payment</h2>
 <p>Payment is due upon completion of service unless other arrangements have been made in advance. We accept Visa, Mastercard, Apple Pay, and PayPal. If a payment method on file is declined or a payment fails, you may be responsible for an administrative fee of $25 to cover the reasonable cost of reprocessing payment.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">8. Limitation of Liability</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">8. Limitation of Liability</h2>
 <p>To the fullest extent permitted under Florida law, Radiance Restore LLC's liability for any claim arising from our services is limited to the cost of the service in question. We are not liable for indirect, incidental, or consequential damages.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">9. Governing Law</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">9. Governing Law</h2>
 <p>These Terms are governed by the laws of the State of Florida, without regard to its conflict of law principles. Any disputes arising from these Terms or our services will be resolved in the courts of Palm Beach County, Florida.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">10. Changes to These Terms</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">10. Changes to These Terms</h2>
 <p>We may update these Terms from time to time. Continued use of our services after changes are posted constitutes acceptance of the updated Terms.</p>
 
-<h3 style="margin-top:24px; margin-bottom:10px; font-size:18px;">11. Contact</h3>
+<h2 style="margin-top:24px; margin-bottom:10px; font-size:18px;">11. Contact</h2>
 <p>Questions about these Terms can be directed to <a href="mailto:admin@radiancerestore.org" style="color:var(--accent-strong); font-weight:700;">admin@radiancerestore.org</a>.</p>
 
   </div>
@@ -526,6 +530,7 @@
         <div><a href="tel:+15615565899">(561) 556-5899</a></div>
         <div><a href="mailto:admin@radiancerestore.org">Email Radiance Restore</a></div>
         <div>Serving Palm Beach, FL &amp; South Florida</div>
+        <div style="margin-top:8px;">Open 24 hours<br><time itemprop="openingHours" datetime="Mo-Su 00:00-23:59">7 days a week</time></div>
       </div>
       <div>
         <div style="color:#fff; font-weight:700; margin-bottom:8px;">Main Menu</div>
