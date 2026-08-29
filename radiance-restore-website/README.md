@@ -76,21 +76,32 @@ Netlify **Pretty URLs** is on, so `/foo.html` is served at `/foo` and links in s
 
 | Page type | URL shape | Example |
 |---|---|---|
-| Core service | `/<service>.html` | `/standard-cleaning.html` |
-| Original city page | `/<city>-house-cleaning.html` | `/palm-beach-house-cleaning.html` |
+| Core service | `/<service>` | `/standard-cleaning` |
+| Original city page | `/<city>-house-cleaning` | `/palm-beach-house-cleaning` |
 | Local landing page | `/<service>-<city>` | `/house-cleaning-boca-raton` |
-| Guide article | `/<keyword-phrase>` | `/how-baseboard-cleaning-works-in-port-st-lucie` |
+| Guide article | `/<service>-<city>` | `/baseboard-cleaning-port-st-lucie` |
 | Service-area hub | `/service-areas` | |
+
+Every URL on the site is extensionless. Netlify's Pretty URLs serves `foo.html` at `/foo`, and a
+blanket `301!` at the bottom of `_redirects` folds any remaining `.html` request onto `/foo`.
+`<link rel="canonical">`, `og:url`, the sitemap and every internal `href` all use the extensionless
+form, so there is exactly one indexable URL per page.
 
 ### `_redirects`
 
 Every rule uses Netlify's forced form (`301!`) so the redirect fires even when a file still exists
-at the old path. Three groups:
+at the old path. **Order matters — Netlify takes the first match, so the blanket rules stay last.**
+Five groups, in file order:
 
-1. **Guide articles** — the 60 old `<topic>-cleaning.html` filenames → their new keyword slugs.
-   The old files are still in the repo; the forced redirects mean they are never served.
-2. **Local landing pages** — `/<slug>.html` → `/<slug>` (extensionless canonical).
-3. **Canonical host** — `radiancerestore.org/*` → `www.radiancerestore.org/*`.
+1. **Local landing pages** — `/<slug>.html` -> `/<slug>`.
+2. **Canonical host** — `radiancerestore.org/*` -> `www.radiancerestore.org/*`.
+3. **Renamed guide slugs** — the long descriptive slugs
+   (`/the-benefits-of-professional-after-party-cleanup-in-palm-beach`) -> the keyword-first slug.
+   Both the `.html` and extensionless forms are covered.
+4. **Original short guide filenames** — `/after-party-cleanup` and `/after-party-cleanup.html`
+   -> `/after-party-cleanup-palm-beach`. These are the filenames the guides shipped under first,
+   so a guide that has moved twice still resolves in a single hop.
+5. **Blanket consolidation (must stay last)** — `/index.html` -> `/` and `/*.html` -> `/:splat`.
 
 If you rename a page, add a `301!` rule. Do not delete old rules — inbound links depend on them.
 
