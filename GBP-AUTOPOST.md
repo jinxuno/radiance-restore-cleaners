@@ -123,6 +123,45 @@ checked.** A broken link in a live post is worse than no post.
 - Contractions are fine. Plain, short words. Understated.
 - Never put the phone number in the post body. Google treats that as phone stuffing.
 
+### 5b. Attach a real photo
+
+**Use a real photo of real work. Never generate one.** These are already live on the domain at
+permanent URLs, already the right format and size, and they show work this company actually did.
+A generated image of a home we never entered would be a misrepresentation under Google's Fake
+Engagement policy and an unsubstantiated performance claim under FTC guidance. It is also less
+persuasive. Do not do it.
+
+Pick the photo that matches the post subject. Prefix every filename with
+`https://www.radiancerestore.org/`
+
+| Post is about | Use one of |
+|---|---|
+| Deep clean, oven, appliances, move-out | `work-oven-card.jpg`, `oven-before.jpg`, `oven-after.jpg`, `work-oven-floor-before.jpg` |
+| Bathroom, shower, tub, tile, grout, hard water | `work-tub-restoration.jpg`, `work-white-shower-tile.jpg`, `work-glass-shower-door.jpg`, `work-tub-tile-pink.jpg`, `work-tub-surround-after.jpg` |
+| Kitchen, sink, range hood, degreasing | `photo-kitchen-sink.jpg`, `work-bar-sink.jpg`, `work-range-hood-interior.jpg`, `work-stove-exhaust-cover.jpg` |
+| Floors, mopping, tile floors | `work-floor-after.jpg`, `photo-floor-mopping.jpg` |
+| Windows, glass, sliders, salt film | `photo-window-squeegee.jpg`, `work-glass-shower-door-after.jpg` |
+| Laundry, linens, Airbnb turnover | `photo-folding-towels.jpg` |
+| Standard clean, recurring, general | `photo-kitchen-sink.jpg`, `photo-floor-mopping.jpg`, `photo-folding-towels.jpg` |
+| Fixtures, faucets, hardware detail | `work-faucet-aerator.jpg`, `work-shower-valve.jpg`, `work-tub-faucet-handles.jpg`, `work-shower-head-handheld.jpg` |
+
+Rotate within a row rather than always taking the first. Do not reuse the same photo two runs
+running.
+
+**Never use `work-stove-exhaust-fan-after.jpg`.** It is 231px on the short edge and Google
+rejects anything under 250px.
+
+**Verify the image before you send it:**
+
+```bash
+curl -sS -o /dev/null -w "%{http_code} %{content_type} %{size_download}\n" <image-url>
+```
+
+Require `200`, a content type of `image/jpeg` or `image/png`, and a size above 10240 bytes.
+If any of those fail, pick another photo. If none verify, **omit `media_items` entirely** and
+send the post without a picture. A post with no photo is fine. A post with a broken media URL
+errors out.
+
 ### 6. Send it
 
 ```bash
@@ -147,6 +186,7 @@ Payload. **These field names are a fixed contract. Do not rename, reorder or dro
   "primary_keyword": "<service plus city>",
   "image_brief": "<one sentence describing the photo this post should have>",
   "services_referenced": ["<services named in the post>"],
+  "media_items": ["<the verified image URL>"],
   "voice_refs": ["GBP-AUTOPOST.md"],
   "created_at": "<today, YYYY-MM-DD>",
   "source": "gbp-autopost"
@@ -156,8 +196,8 @@ Payload. **These field names are a fixed contract. Do not rename, reorder or dro
 `cta_type` must be one of `BOOK`, `ORDER`, `SHOP`, `LEARN_MORE`, `SIGN_UP`, `CALL`. Use
 `LEARN_MORE` for guide and service pages, `BOOK` when the post is a direct call to book.
 
-**Do not send a `media_items` key.** Image generation is not set up. A post with no photo is
-fine. A post with a broken media URL errors out.
+`media_items` is an array of strings and Make reads the first element. If no photo verified,
+**omit the key entirely.** Never send an empty array, a null, or an unverified URL.
 
 ### 7. Report
 
@@ -170,7 +210,8 @@ more than twice.
 ## Rules that override everything
 
 1. **Never invent a price, a statistic, a review, or an award.**
-2. **Never claim work the company did not do**, or show or describe a specific home as ours.
+2. **Never claim work the company did not do.** Only the real job photos listed above may be
+   attached. Never generate, source or link an image of a home this company did not clean.
 3. **Never send an unverified URL.**
 4. **Never post about a disaster as a sales opportunity.** If a storm has hit, the tone is
    availability and help, not promotion. If it would read badly to someone who just lost a
