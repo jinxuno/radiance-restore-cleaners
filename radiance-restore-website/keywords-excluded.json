@@ -1,0 +1,41 @@
+{
+ "Competitor / other brand names": [
+  "spotless cleaning service",
+  "boca best cleaners",
+  "molly maid of boca raton & coral springs",
+  "opiniones de molly maid boca raton",
+  "molly maid of west boca raton & coral springs",
+  "spotless house cleaning",
+  "spotless home cleaners"
+ ],
+ "No city / too generic to rank locally": [
+  "empty house cleaning services near me",
+  "office janitorial cleaning services"
+ ],
+ "Not a service query": [
+  "cleaning lady near me craigslist"
+ ],
+ "Job-seeker intent, not customer intent": [
+  "cleaning jobs in west palm beach fl",
+  "office cleaning jobs in west palm beach",
+  "cleaning jobs in wellington"
+ ],
+ "Malformed scrape artifact (\"boca in raton\")": [
+  "office building cleaning companies boca in raton",
+  "office building cleaning companies boca in raton fl",
+  "office building cleaning company boca in raton",
+  "office building cleaning company boca in raton fl",
+  "air bnb cleaning boca in raton",
+  "air bnb cleaning boca in raton fl",
+  "cleaning services boca in raton",
+  "cleaning services boca in raton fl",
+  "day care cleaning boca in raton",
+  "day care cleaning boca in raton fl",
+  "movie theater cleaning boca in raton",
+  "movie theater cleaning boca in raton fl",
+  "office building cleaning boca in raton",
+  "office building cleaning boca in raton fl",
+  "office building cleaning services boca in raton",
+  "office building cleaning services boca in raton fl"
+ ]
+}

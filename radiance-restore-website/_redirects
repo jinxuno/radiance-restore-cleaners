@@ -1,3 +1,37 @@
+# Local landing pages -> extensionless (301)
+/carpet-cleaning-boca-raton.html   /carpet-cleaning-boca-raton   301!
+/carpet-cleaning-boynton-beach.html   /carpet-cleaning-boynton-beach   301!
+/carpet-cleaning-delray-beach.html   /carpet-cleaning-delray-beach   301!
+/carpet-cleaning-port-st-lucie.html   /carpet-cleaning-port-st-lucie   301!
+/commercial-office-cleaning-boca-raton.html   /commercial-office-cleaning-boca-raton   301!
+/commercial-office-cleaning-north-palm-beach.html   /commercial-office-cleaning-north-palm-beach   301!
+/commercial-office-cleaning-palm-beach-gardens.html   /commercial-office-cleaning-palm-beach-gardens   301!
+/commercial-office-cleaning-port-st-lucie.html   /commercial-office-cleaning-port-st-lucie   301!
+/commercial-office-cleaning-west-palm-beach.html   /commercial-office-cleaning-west-palm-beach   301!
+/deep-cleaning-boca-raton.html   /deep-cleaning-boca-raton   301!
+/estate-cleaning-palm-beach-gardens.html   /estate-cleaning-palm-beach-gardens   301!
+/house-cleaning-boca-raton.html   /house-cleaning-boca-raton   301!
+/house-cleaning-boynton-beach.html   /house-cleaning-boynton-beach   301!
+/house-cleaning-coral-springs.html   /house-cleaning-coral-springs   301!
+/house-cleaning-deerfield-beach.html   /house-cleaning-deerfield-beach   301!
+/house-cleaning-delray-beach.html   /house-cleaning-delray-beach   301!
+/house-cleaning-jupiter.html   /house-cleaning-jupiter   301!
+/house-cleaning-palm-beach-county.html   /house-cleaning-palm-beach-county   301!
+/house-cleaning-palm-beach-gardens.html   /house-cleaning-palm-beach-gardens   301!
+/house-cleaning-wellington.html   /house-cleaning-wellington   301!
+/house-cleaning-west-palm-beach.html   /house-cleaning-west-palm-beach   301!
+/maid-service-boca-raton.html   /maid-service-boca-raton   301!
+/maid-service-coral-springs.html   /maid-service-coral-springs   301!
+/maid-service-delray-beach.html   /maid-service-delray-beach   301!
+/move-in-move-out-cleaning-boca-raton.html   /move-in-move-out-cleaning-boca-raton   301!
+/move-in-move-out-cleaning-delray-beach.html   /move-in-move-out-cleaning-delray-beach   301!
+/move-in-move-out-cleaning-palm-beach-gardens.html   /move-in-move-out-cleaning-palm-beach-gardens   301!
+/move-in-move-out-cleaning-wellington.html   /move-in-move-out-cleaning-wellington   301!
+/recurring-cleaning-palm-beach-gardens.html   /recurring-cleaning-palm-beach-gardens   301!
+/service-areas.html   /service-areas   301!
+/tile-cleaning-boynton-beach.html   /tile-cleaning-boynton-beach   301!
+/window-cleaning-west-palm-beach.html   /window-cleaning-west-palm-beach   301!
+
 # Old guide URLs -> new blog slugs (301, permanent)
 /after-party-cleanup.html   /the-benefits-of-professional-after-party-cleanup-in-palm-beach   301!
 /after-party-cleanup   /the-benefits-of-professional-after-party-cleanup-in-palm-beach   301!
