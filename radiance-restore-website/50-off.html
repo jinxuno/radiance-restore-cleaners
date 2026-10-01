@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Get $50 Off Your First Clean | Radiance Restore Cleaners</title>
+<meta name="description" content="Tap a few quick answers and we'll text you your exact house cleaning price, with $50 off your first clean. Same trained cleaner every visit. Pay after the clean.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.radiancerestore.org/50-off">
+<meta name="theme-color" content="#a4133c">
+<meta property="og:title" content="Get $50 off your first clean">
+<meta property="og:description" content="Your exact price, texted to you in seconds.">
+<meta property="og:image" content="https://www.radiancerestore.org/og-card.jpg">
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="/offer/offer.css">
+</head>
+<body>
+
+<!-- Netlify Forms registration (hidden). Submissions trigger the email notification set in Netlify. -->
+<form name="offer-50" data-netlify="true" netlify-honeypot="company" hidden>
+  <input name="name"><input name="phone"><input name="address"><input name="service"><input name="bedrooms">
+  <input name="bathrooms"><input name="frequency"><input name="first_clean_price"><input name="recurring_price">
+  <input name="quote_url"><input name="utm_source"><input name="utm_medium"><input name="utm_campaign">
+  <input name="utm_content"><input name="utm_term"><input name="company">
+</form>
+
+<header class="top">
+  <a href="/" aria-label="Radiance Restore Cleaners home"><img src="/logo.png" alt="Radiance Restore Cleaners" width="120" height="40"></a>
+  <a class="call" href="tel:+15615565899">(561) 556-5899</a>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <span class="badge">New client offer</span>
+    <h1>Get <span class="amt">$50 off</span><br>your first clean</h1>
+    <p class="sub">Tap a few quick answers. We'll text your exact price in seconds. No calls, no pressure.</p>
+    <ul class="trust">
+      <li>5.0 on Google</li>
+      <li>Same cleaner every visit</li>
+      <li>Pay after the clean</li>
+    </ul>
+  </div>
+
+  <div class="wrap" id="start">
+    <div class="card" id="card">
+      <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+      <div class="progress-label" id="barLabel">Step 1 of 5</div>
+
+      <form id="quoteForm" novalidate>
+        <div class="err" id="err" role="alert"></div>
+
+        <fieldset>
+          <legend>What kind of clean?</legend>
+          <div class="chips big" data-step="service">
+            <div class="chip"><input type="radio" name="service" id="s-standard" value="standard"><label for="s-standard">Standard</label></div>
+            <div class="chip"><input type="radio" name="service" id="s-deep" value="deep"><label for="s-deep">Deep</label></div>
+            <div class="chip"><input type="radio" name="service" id="s-move" value="move"><label for="s-move">Move in / out</label></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Bedrooms</legend>
+          <div class="chips" data-step="beds">
+            <div class="chip"><input type="radio" name="beds" id="b0" value="0"><label for="b0">Studio</label></div>
+            <div class="chip"><input type="radio" name="beds" id="b1" value="1"><label for="b1">1</label></div>
+            <div class="chip"><input type="radio" name="beds" id="b2" value="2"><label for="b2">2</label></div>
+            <div class="chip"><input type="radio" name="beds" id="b3" value="3"><label for="b3">3</label></div>
+            <div class="chip"><input type="radio" name="beds" id="b4" value="4"><label for="b4">4</label></div>
+            <div class="chip"><input type="radio" name="beds" id="b5" value="5"><label for="b5">5</label></div>
+            <div class="chip"><input type="radio" name="beds" id="b6" value="6"><label for="b6">6+</label></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Bathrooms</legend>
+          <div class="chips" data-step="baths">
+            <div class="chip"><input type="radio" name="baths" id="ba1" value="1"><label for="ba1">1</label></div>
+            <div class="chip"><input type="radio" name="baths" id="ba15" value="1.5"><label for="ba15">1.5</label></div>
+            <div class="chip"><input type="radio" name="baths" id="ba2" value="2"><label for="ba2">2</label></div>
+            <div class="chip"><input type="radio" name="baths" id="ba25" value="2.5"><label for="ba25">2.5</label></div>
+            <div class="chip"><input type="radio" name="baths" id="ba3" value="3"><label for="ba3">3</label></div>
+            <div class="chip"><input type="radio" name="baths" id="ba35" value="3.5"><label for="ba35">3.5</label></div>
+            <div class="chip"><input type="radio" name="baths" id="ba4" value="4"><label for="ba4">4+</label></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>How often? <small>(recurring saves more)</small></legend>
+          <div class="chips freq" data-step="freq">
+            <div class="chip"><span class="ribbon">Most popular</span><input type="radio" name="freq" id="f-bi" value="biweekly"><label for="f-bi">Every other week<span class="tag">Save 15%</span></label></div>
+            <div class="chip"><input type="radio" name="freq" id="f-mo" value="monthly"><label for="f-mo">Monthly<span class="tag">Save 10%</span></label></div>
+            <div class="chip"><input type="radio" name="freq" id="f-wk" value="weekly"><label for="f-wk">Weekly<span class="tag">Save 20%</span></label></div>
+            <div class="chip"><input type="radio" name="freq" id="f-once" value="once"><label for="f-once">Just once<span class="tag">&nbsp;</span></label></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Where should we text your price?</legend>
+          <div class="field">
+            <label for="name">First name</label>
+            <input id="name" name="name" autocomplete="given-name" required maxlength="60">
+          </div>
+          <div class="field">
+            <label for="phone">Mobile number</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" required placeholder="(561) 555 0123" maxlength="20">
+          </div>
+          <div class="field">
+            <label for="address">Home address <span class="opt">Optional</span></label>
+            <input id="address" name="address" autocomplete="street-address" maxlength="200" placeholder="Street, city">
+          </div>
+          <div class="hp" aria-hidden="true"><label for="company">Company</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
+        </fieldset>
+
+        <button class="cta" type="submit" id="go">Text me my exact price</button>
+        <p class="fine">By tapping, you agree to receive texts from Radiance Restore Cleaners at this number about your quote and booking. Message and data rates may apply. Reply STOP to opt out. We never sell your info.</p>
+      </form>
+
+      <div class="done" id="done" aria-live="polite">
+        <div class="big"><svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true" style="margin:0 auto"><circle cx="12" cy="12" r="11" fill="#1f8a5b"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2 id="doneTitle">Check your phone!</h2>
+        <p id="doneMsg">Your exact price is on its way by text.</p>
+        <div class="price-pill"><span class="was" id="doneWas"></span><span class="now" id="doneNow"></span><div id="doneRec" style="font-size:14px;font-weight:700;color:var(--ink-soft)"></div></div>
+        <a class="cta" id="doneLink" href="/quote">See my quote and lock in my spot →</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li>Tap your answers above<span>Takes about 20 seconds.</span></li>
+        <li>Get your exact price by text<span>With $50 already taken off your first clean.</span></li>
+        <li>Pick your day and relax<span>Same trained cleaner every visit. Pay only after the clean.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <h2>Real results from our team</h2>
+      <div class="ba">
+        <figure><img src="/oven-before.jpg" alt="Oven interior before cleaning" loading="lazy" width="400" height="533"><figcaption>Before</figcaption></figure>
+        <figure><img src="/oven-after.jpg" alt="Same oven interior after cleaning" loading="lazy" width="400" height="533"><figcaption>After</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <h2>Questions</h2>
+      <details><summary>When do I pay?</summary><p>Only after your clean is finished and you're happy with it. We keep a card on file to hold your spot, and nothing is charged until the job is done.</p></details>
+      <details><summary>Who will clean my home?</summary><p>A vetted, trained cleaner from our team. On recurring plans you get the same cleaner every visit.</p></details>
+      <details><summary>Where do you clean?</summary><p>Palm Beach County, including Jupiter, Palm Beach Gardens, Wellington, Boca Raton and Delray Beach, plus Parkland.</p></details>
+      <details><summary>How does the $50 off work?</summary><p>It comes off your first clean automatically. Your texted price already includes it.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer class="mini">© Radiance Restore Cleaners · <a href="/privacy-policy">Privacy</a> · <a href="/terms-and-conditions">Terms</a></footer>
+
+<nav class="dock" aria-label="Quick contact">
+  <a href="sms:+15615565899" data-dock="text"><svg class="ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Text us</a>
+  <a href="tel:+15615565899" data-dock="call"><svg class="ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call us</a>
+  <a href="#start" class="book" data-dock="book"><svg class="ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Book now</a>
+</nav>
+
+<script type="module">
+import { buildQuote, money, bedLabel, bathLabel } from "/offer/pricing.js";
+import { burstFrom, bigCelebration, buzz, getUtm, trackView } from "/offer/fun.js";
+
+const utm = getUtm();
+trackView("/50-off landing page");
+
+const form = document.getElementById("quoteForm");
+const bar = document.getElementById("bar");
+const barLabel = document.getElementById("barLabel");
+const err = document.getElementById("err");
+const go = document.getElementById("go");
+const groups = ["service", "beds", "baths", "freq"];
+const nameEl = document.getElementById("name");
+
+function val(n) { const el = form.querySelector(`input[name="${n}"]:checked`); return el ? el.value : null; }
+
+function progress() {
+  let done = groups.filter((g) => val(g) !== null).length;
+  const name = nameEl.value.trim(), phone = form.phone.value.replace(/\D/g, "");
+  if (name && phone.length >= 10) done += 1;
+  bar.style.width = (done / 5) * 100 + "%";
+  barLabel.textContent = done >= 5 ? "Ready" : `Step ${done + 1} of 5`;
+}
+
+// Tap feedback: confetti puff, haptic tick, then glide to the next question.
+form.querySelectorAll('.chips input[type="radio"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    const label = form.querySelector(`label[for="${input.id}"]`);
+    burstFrom(label, 16, 5);
+    buzz(10);
+    progress();
+    const fs = input.closest("fieldset").nextElementSibling;
+    if (fs && fs.tagName === "FIELDSET") {
+      const firstUnanswered = fs.querySelector("input");
+      setTimeout(() => fs.scrollIntoView({ behavior: "smooth", block: "center" }), 220);
+      if (fs.querySelector('input[name="name"]') && !nameEl.value) setTimeout(() => nameEl.focus({ preventScroll: true }), 650);
+    }
+  });
+});
+["input", "change"].forEach((e) => { nameEl.addEventListener(e, progress); form.phone.addEventListener(e, progress); });
+
+// Format phone as they type.
+form.phone.addEventListener("input", () => {
+  const d = form.phone.value.replace(/\D/g, "").replace(/^1(?=\d{10})/, "").slice(0, 10);
+  let out = d;
+  if (d.length > 6) out = `(${d.slice(0, 3)}) ${d.slice(3, 6)} ${d.slice(6)}`;
+  else if (d.length > 3) out = `(${d.slice(0, 3)}) ${d.slice(3)}`;
+  form.phone.value = out;
+});
+
+function fail(msg, el) {
+  err.textContent = msg;
+  err.style.display = "block";
+  document.getElementById("card").classList.remove("shake");
+  void document.getElementById("card").offsetWidth;
+  document.getElementById("card").classList.add("shake");
+  buzz([20, 40, 20]);
+  (el || err).scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+const encode = (o) => Object.keys(o).map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(o[k] ?? "")).join("&");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  err.style.display = "none";
+  const missing = { service: "Pick the kind of clean", beds: "Pick your bedrooms", baths: "Pick your bathrooms", freq: "Pick how often" };
+  for (const g of groups) if (!val(g)) return fail(missing[g], form.querySelector(`[data-step="${g}"]`));
+  if (!nameEl.value.trim()) return fail("Add your first name", nameEl);
+  if (form.phone.value.replace(/\D/g, "").length < 10) return fail("Add a 10 digit mobile number", form.phone);
+
+  const q = buildQuote({ service: val("service"), beds: val("beds"), baths: val("baths"), freq: val("freq") });
+  const payload = {
+    name: nameEl.value.trim(), phone: form.phone.value, address: form.address.value.trim(),
+    company: form.company.value, service: q.service, beds: q.beds, baths: q.baths, freq: q.freq, ...utm,
+  };
+
+  go.disabled = true;
+  go.textContent = "Sending your price…";
+  burstFrom(go, 30, 8);
+  buzz(15);
+
+  let res = null;
+  try {
+    const r = await fetch("/api/send-quote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    res = await r.json().catch(() => ({ ok: false, error: "Couldn't send. Please try again or text us at (561) 556 5899." }));
+    if (!r.ok || !res.ok) throw new Error(res && res.error || "Something went wrong");
+  } catch (ex) {
+    go.disabled = false;
+    go.textContent = "Text me my exact price";
+    return fail((ex && ex.message) || "Couldn't send. Please try again or text us at (561) 556 5899.");
+  }
+
+  // Netlify Forms copy, so the email notification fires. Never blocks the customer.
+  fetch("/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: encode({
+      "form-name": "offer-50", name: payload.name, phone: payload.phone, address: payload.address,
+      service: q.serviceLabel, bedrooms: bedLabel(q.beds), bathrooms: bathLabel(q.baths), frequency: q.freqLabel,
+      first_clean_price: money(q.firstWithOffer), recurring_price: q.recurringPerVisit ? money(q.recurringPerVisit) : "",
+      quote_url: res.quoteUrl, utm_source: utm.utm_source || "", utm_medium: utm.utm_medium || "",
+      utm_campaign: utm.utm_campaign || "", utm_content: utm.utm_content || "", utm_term: utm.utm_term || "", company: "",
+    }),
+  }).catch(() => {});
+
+  try { localStorage.setItem("rr_lead", JSON.stringify({ name: payload.name, phone: payload.phone, address: payload.address })); } catch {}
+
+  form.style.display = "none";
+  bar.style.width = "100%";
+  barLabel.textContent = "Done";
+  const done = document.getElementById("done");
+  done.style.display = "block";
+  document.getElementById("doneTitle").textContent = res.smsSent ? `Check your phone, ${payload.name.split(" ")[0]}!` : `You're all set, ${payload.name.split(" ")[0]}!`;
+  document.getElementById("doneMsg").textContent = res.smsSent ? "Your exact price just landed in your texts." : "Here's your exact price. We'll text you shortly too.";
+  document.getElementById("doneWas").textContent = money(q.firstFull);
+  document.getElementById("doneNow").textContent = money(q.firstWithOffer);
+  document.getElementById("doneRec").textContent = q.recurringPerVisit ? `first clean, then ${money(q.recurringPerVisit)} per visit` : "for your clean";
+  document.getElementById("doneLink").href = res.quoteUrl.replace(/^https?:\/\/[^/]+/, "");
+  done.scrollIntoView({ behavior: "smooth", block: "center" });
+  bigCelebration();
+  buzz([30, 50, 30]);
+});
+
+document.querySelectorAll("[data-dock]").forEach((a) => a.addEventListener("click", () => { burstFrom(a, 14, 5); buzz(10); }));
+progress();
+</script>
+</body>
+</html>

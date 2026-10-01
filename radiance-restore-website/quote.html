@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Your Cleaning Quote | Radiance Restore Cleaners</title>
+<meta name="description" content="Your exact house cleaning price from Radiance Restore Cleaners, with $50 off your first clean, everything included, and optional add ons.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.radiancerestore.org/quote">
+<meta name="theme-color" content="#a4133c">
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="/offer/offer.css">
+<style>
+  .q-head{text-align:center;padding:4px 0 12px}
+  .q-head h1{font-size:clamp(30px,8vw,44px);margin:8px 0 4px}
+  .q-meta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0 0;padding:0;list-style:none}
+  .q-meta li{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-weight:700;font-size:13.5px}
+  .total{text-align:center}
+  .total .was{text-decoration:line-through;color:var(--muted);font-weight:700;font-size:18px}
+  .total .now{font-size:56px;font-weight:900;color:var(--btn);line-height:1;letter-spacing:-.02em}
+  .total .lbl{font-weight:700;color:var(--ink-soft)}
+  .saving{display:inline-block;margin-top:8px;background:var(--ok);color:#fff;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px}
+  .rec{margin-top:14px;padding-top:14px;border-top:2px dashed var(--line);font-weight:700}
+  .rec strong{color:var(--btn);font-size:22px}
+  h2.sec{font-family:var(--serif);font-size:24px;margin:28px 0 12px}
+  .addon{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:8px;border:2px solid transparent;transition:border-color .2s,background .2s}
+  .addon.on{border-color:var(--accent);background:#fff7f9}
+  .addon .t{flex:1;font-weight:700;font-size:15px;line-height:1.25}
+  .addon .t small{display:block;font-weight:600;color:var(--muted);font-size:12.5px}
+  .addon .p{font-weight:800;color:var(--wine);white-space:nowrap}
+  .tog{position:relative;width:52px;height:30px;flex:none}
+  .tog input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+  .tog span{position:absolute;inset:0;border-radius:999px;background:var(--blush);transition:background .2s}
+  .tog span::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15);transition:transform .25s cubic-bezier(.2,1.6,.4,1)}
+  .tog input:checked + span{background:var(--btn)}
+  .tog input:checked + span::after{transform:translateX(22px)}
+  .tog input:focus-visible + span{outline:3px solid var(--strong);outline-offset:2px}
+  .qty{display:none;align-items:center;gap:6px}
+  .addon.on .qty{display:flex}
+  .qty button{width:30px;height:30px;border-radius:50%;border:2px solid var(--blush);background:#fff;font-weight:900;color:var(--wine);cursor:pointer}
+  .pay{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;padding:0;list-style:none}
+  .pay li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-weight:700;font-size:13px}
+  .sticky-total{position:sticky;top:0;z-index:20;background:rgba(255,240,243,.95);backdrop-filter:blur(6px);padding:8px 0;text-align:center;font-weight:800;display:none}
+  .sticky-total.show{display:block}
+</style>
+</head>
+<body>
+
+<form name="offer-50-booking" data-netlify="true" netlify-honeypot="company" hidden>
+  <input name="name"><input name="phone"><input name="address"><input name="service"><input name="home">
+  <input name="frequency"><input name="addons"><input name="first_clean_total"><input name="recurring_price">
+  <input name="preferred_day"><input name="preferred_time"><input name="utm_source"><input name="utm_campaign"><input name="utm_content"><input name="company">
+</form>
+
+<header class="top">
+  <a href="/" aria-label="Radiance Restore Cleaners home"><img src="/logo.png" alt="Radiance Restore Cleaners" width="120" height="40"></a>
+  <a class="call" href="tel:+15615565899">(561) 556-5899</a>
+</header>
+
+<div class="sticky-total" id="stickyTotal" aria-hidden="true"></div>
+
+<main class="wrap">
+  <div class="q-head">
+    <span class="badge">$50 off applied</span>
+    <h1 id="hello">Your quote is ready</h1>
+    <ul class="q-meta" id="meta"></ul>
+  </div>
+
+  <div class="card total" id="totalCard">
+    <div class="lbl">Your first clean</div>
+    <div class="was" id="was"></div>
+    <div class="now" id="now">$0</div>
+    <span class="saving">You save $50</span>
+    <div class="rec" id="rec"></div>
+  </div>
+
+  <h2 class="sec">How often?</h2>
+  <div class="chips freq" id="freqChips">
+    <div class="chip"><span class="ribbon">Most popular</span><input type="radio" name="freq" id="f-bi" value="biweekly"><label for="f-bi">Every other week<span class="tag">Save 15%</span></label></div>
+    <div class="chip"><input type="radio" name="freq" id="f-mo" value="monthly"><label for="f-mo">Monthly<span class="tag">Save 10%</span></label></div>
+    <div class="chip"><input type="radio" name="freq" id="f-wk" value="weekly"><label for="f-wk">Weekly<span class="tag">Save 20%</span></label></div>
+    <div class="chip"><input type="radio" name="freq" id="f-once" value="once"><label for="f-once">Just once<span class="tag">&nbsp;</span></label></div>
+  </div>
+
+  <h2 class="sec" id="incTitle">What's included</h2>
+  <ul class="checks" id="included"></ul>
+
+  <h2 class="sec">Add ons <small style="font-family:var(--sans);font-size:14px;color:var(--muted)">(optional)</small></h2>
+  <div id="addons"></div>
+
+  <h2 class="sec">Pick your day</h2>
+  <div class="chips" id="dayChips"></div>
+  <div class="chips" id="timeChips" style="margin-top:10px">
+    <div class="chip"><input type="radio" name="time" id="t-am" value="Morning"><label for="t-am">Morning</label></div>
+    <div class="chip"><input type="radio" name="time" id="t-pm" value="Afternoon"><label for="t-pm">Afternoon</label></div>
+    <div class="chip"><input type="radio" name="time" id="t-any" value="Flexible"><label for="t-any">Flexible</label></div>
+  </div>
+
+  <div class="card" style="margin-top:22px" id="lockCard">
+    <form id="lockForm" novalidate>
+      <div class="err" id="err" role="alert"></div>
+      <div class="field">
+        <label for="name">First name</label>
+        <input id="name" autocomplete="given-name" maxlength="60" required>
+      </div>
+      <div class="field">
+        <label for="phone">Mobile number</label>
+        <input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" required placeholder="(561) 555 0123">
+      </div>
+      <div class="field">
+        <label for="address">Home address <span class="opt">Optional</span></label>
+        <input id="address" autocomplete="street-address" maxlength="200" placeholder="Street, city">
+      </div>
+      <div class="hp" aria-hidden="true"><label for="company">Company</label><input id="company" tabindex="-1" autocomplete="off"></div>
+      <button class="cta" type="submit" id="lockBtn">Lock in my spot</button>
+      <p class="fine">Nothing is charged today. We'll text you a secure Jobber link to confirm and save a card, and you only pay after your clean.</p>
+    </form>
+    <div class="done" id="done" aria-live="polite">
+      <div class="big"><svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true" style="margin:0 auto"><circle cx="12" cy="12" r="11" fill="#1f8a5b"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h2>You're almost booked!</h2>
+      <p>Watch your texts for a secure Jobber link to confirm and save your card. Nothing is charged until after your clean.</p>
+      <a class="cta secondary" href="https://clienthub.getjobber.com/client_hubs/469c265b-c484-4c2c-9d0b-54c25b0fa906/public/work_request/embedded_work_request_form?form_id=4962891" target="_blank" rel="noopener">Prefer to book in Jobber now? →</a>
+    </div>
+  </div>
+
+  <h2 class="sec">Ways to pay after your clean</h2>
+  <ul class="pay">
+    <li>Card</li><li>Apple Pay</li><li>Google Pay</li><li>Zelle</li><li>Venmo</li><li>Cash App</li><li>PayPal</li>
+  </ul>
+  <p class="fine">Your card is saved securely through Jobber Payments to hold your spot. Prefer another method? Tell us when we text and we'll set it up.</p>
+
+  <section class="block" style="padding-bottom:10px">
+    <details><summary>Is this price final?</summary><p>Yes, for the home size you picked. If the home turns out much larger or needs extra work, we'll tell you before we start. No surprises.</p></details>
+    <details><summary>Can I keep the same cleaner?</summary><p>Yes. On recurring plans you get the same trained cleaner every visit.</p></details>
+  </section>
+</main>
+
+<footer class="mini">© Radiance Restore Cleaners · <a href="/privacy-policy">Privacy</a> · <a href="/terms-and-conditions">Terms</a></footer>
+
+<nav class="dock" aria-label="Quick contact">
+  <a href="sms:+15615565899" data-dock="text"><svg class="ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Text us</a>
+  <a href="tel:+15615565899" data-dock="call"><svg class="ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call us</a>
+  <a href="#lockCard" class="book" data-dock="book"><svg class="ic" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Lock in</a>
+</nav>
+
+<script type="module">
+import { buildQuote, money, bedLabel, bathLabel, SERVICES } from "/offer/pricing.js";
+import { burstFrom, bigCelebration, buzz, getUtm, trackView, countUp } from "/offer/fun.js";
+
+const q = new URLSearchParams(location.search);
+const state = {
+  service: SERVICES[q.get("s")] ? q.get("s") : "standard",
+  beds: Math.max(0, Math.min(6, parseInt(q.get("b") ?? "3", 10) || 0)),
+  baths: Math.max(1, Math.min(4, parseFloat(q.get("ba") ?? "2") || 1)),
+  freq: ["biweekly", "monthly", "weekly", "once"].includes(q.get("f")) ? q.get("f") : "biweekly",
+};
+const firstName = (q.get("n") || "").replace(/[^\p{L}\s'.]/gu, "").slice(0, 30).trim();
+const utm = getUtm();
+trackView("/quote page", `Quote: ${SERVICES[state.service].label}, ${bedLabel(state.beds)}, ${bathLabel(state.baths)}`);
+
+// Prices from the owner's pricing document (carpet, upholstery, custom cleaning).
+const ADDONS = [
+  { id: "xhour", label: "Extra hour of cleaning", note: "For anything extra on your list", price: 48, qty: true },
+  { id: "carpetbed", label: "Bedroom carpet cleaning", note: "Per bedroom", price: 48, qty: true },
+  { id: "carpetliving", label: "Living area carpet cleaning", note: "From $58, larger rooms up to $68", price: 58 },
+  { id: "stairs", label: "Staircase and hallway carpet", price: 88 },
+  { id: "loveseat", label: "Loveseat upholstery cleaning", note: "Fabric only, no leather", price: 128 },
+  { id: "sofa3", label: "3 seat sofa upholstery cleaning", note: "Fabric only, no leather", price: 168 },
+  { id: "sectional", label: "Small sectional upholstery cleaning", note: "3 to 4 seats", price: 198 },
+  { id: "queen", label: "Queen mattress cleaning", price: 158 },
+  { id: "king", label: "King mattress cleaning", price: 188 },
+  { id: "fridge", label: "Inside the fridge", note: "We'll confirm the price by text", price: null, hideFor: ["move"] },
+  { id: "oven", label: "Inside the oven", note: "We'll confirm the price by text", price: null, hideFor: ["deep", "move"] },
+  { id: "cabinets", label: "Inside cabinets and drawers", note: "We'll confirm the price by text", price: null, hideFor: ["move"] },
+];
+
+const INCLUDED = {
+  standard: [
+    "Floors vacuumed, swept and mopped, including under furniture where reachable",
+    "Furniture, shelves, woodwork and door frames dusted",
+    "Ceiling fans dusted",
+    "Window sills and ledges dusted",
+    "Countertops and backsplash cleaned",
+    "Sinks cleaned, disinfected and chrome shined",
+    "Stovetop and outside of appliances cleaned",
+    "Microwave cleaned inside and out",
+    "Tubs, showers, tile and glass doors cleaned and disinfected",
+    "Toilets and vanities cleaned and disinfected",
+    "Mirrors cleaned",
+    "Trash emptied and relined",
+    "Beds made",
+  ],
+  deep: [
+    "Baseboards hand washed and scrubbed",
+    "Blinds and shutters hand washed and wiped",
+    "Doors, frames, hinges and jambs wiped",
+    "Cabinet doors, drawers and handles cleaned",
+    "Inside of the oven wiped down",
+    "Light fixtures, vents, switches and outlets dusted",
+    "Interior windows cleaned streak free",
+    "Walls spot treated for marks and scuffs",
+    "Upholstery and furniture hand vacuumed",
+  ],
+  move: [
+    "Inside the refrigerator cleaned",
+    "Inside all cabinets and drawers cleaned",
+    "Inside all appliances cleaned",
+  ],
+};
+
+const picked = new Map(); // id -> qty
+
+function quote() { return buildQuote(state); }
+function addonTotal() {
+  let t = 0;
+  for (const [id, n] of picked) { const a = ADDONS.find((x) => x.id === id); if (a && a.price) t += a.price * n; }
+  return t;
+}
+
+function renderMeta() {
+  document.getElementById("hello").textContent = firstName ? `${firstName}, your quote is ready` : "Your quote is ready";
+  const meta = document.getElementById("meta");
+  meta.innerHTML = "";
+  [SERVICES[state.service].label, bedLabel(state.beds), bathLabel(state.baths)].forEach((t) => {
+    const li = document.createElement("li"); li.textContent = t; meta.appendChild(li);
+  });
+}
+
+function renderIncluded() {
+  const list = [...INCLUDED.standard];
+  if (state.service !== "standard") list.push(...INCLUDED.deep);
+  if (state.service === "move") list.push(...INCLUDED.move);
+  document.getElementById("incTitle").textContent = `What's included in your ${SERVICES[state.service].label.toLowerCase()}`;
+  const ul = document.getElementById("included");
+  ul.innerHTML = "";
+  list.forEach((t, i) => { const li = document.createElement("li"); li.textContent = t; if (i >= 6) li.hidden = true; ul.appendChild(li); });
+  if (list.length > 6) {
+    const more = document.createElement("button");
+    more.type = "button"; more.className = "cta secondary"; more.style.marginTop = "10px";
+    more.textContent = `See all ${list.length} things we clean`;
+    more.addEventListener("click", () => { ul.querySelectorAll("li[hidden]").forEach((li) => (li.hidden = false)); burstFrom(more, 18, 6); buzz(10); more.remove(); });
+    ul.after(more);
+  }
+}
+
+let firstRender = true;
+function renderTotal() {
+  const qt = quote();
+  const extra = addonTotal();
+  document.getElementById("was").textContent = money(qt.firstFull + extra);
+  const nowEl = document.getElementById("now");
+  if (firstRender) { countUp(nowEl, qt.firstWithOffer + extra, 1100); firstRender = false; }
+  else nowEl.textContent = money(qt.firstWithOffer + extra);
+  const rec = document.getElementById("rec");
+  rec.innerHTML = qt.recurringPerVisit
+    ? `Then <strong>${money(qt.recurringPerVisit)}</strong> per visit, ${qt.freqLabel.toLowerCase()}<br><span style="font-weight:600;color:var(--muted);font-size:14px">Same cleaner every time. Cancel or pause anytime.</span>`
+    : `<span style="font-weight:600;color:var(--muted);font-size:14px">Want it to stay this clean? Every other week is just ${money(Math.round(buildQuote({ ...state, freq: "biweekly" }).recurringPerVisit))} per visit.</span>`;
+  const st = document.getElementById("stickyTotal");
+  st.textContent = `First clean ${money(qt.firstWithOffer + extra)}${qt.recurringPerVisit ?` · then ${money(qt.recurringPerVisit)}/visit` : ""}`;
+}
+
+function renderAddons() {
+  const box = document.getElementById("addons");
+  box.innerHTML = "";
+  ADDONS.filter((a) => !(a.hideFor || []).includes(state.service)).forEach((a) => {
+    const row = document.createElement("div");
+    row.className = "addon" + (picked.has(a.id) ? " on" : "");
+    row.innerHTML = `
+      <div class="t"></div>
+      <div class="qty"><button type="button" data-d="-1" aria-label="Fewer">−</button><span class="n">1</span><button type="button" data-d="1" aria-label="More">+</button></div>
+      <div class="p"></div>
+      <div class="tog"><input type="checkbox" id="ad-${a.id}"><span></span></div>`;
+    row.querySelector(".t").innerHTML = "";
+    const t = row.querySelector(".t");
+    const lab = document.createElement("label"); lab.setAttribute("for", `ad-${a.id}`); lab.textContent = a.label; lab.style.cursor = "pointer";
+    t.appendChild(lab);
+    if (a.note) { const s = document.createElement("small"); s.textContent = a.note; t.appendChild(s); }
+    row.querySelector(".p").textContent = a.price ? `+${money(a.price)}` : "Ask";
+    if (!a.qty) row.querySelector(".qty").remove();
+    const cb = row.querySelector("input");
+    cb.checked = picked.has(a.id);
+    if (a.qty && picked.has(a.id)) row.querySelector(".n").textContent = picked.get(a.id);
+    cb.addEventListener("change", () => {
+      if (cb.checked) { picked.set(a.id, 1); row.classList.add("on"); burstFrom(cb, 14, 5); buzz(10); }
+      else { picked.delete(a.id); row.classList.remove("on"); buzz(6); }
+      if (a.qty) row.querySelector(".n").textContent = picked.get(a.id) || 1;
+      renderTotal(); pulseTotal();
+    });
+    row.querySelectorAll(".qty button").forEach((b) => b.addEventListener("click", () => {
+      const n = Math.max(1, Math.min(10, (picked.get(a.id) || 1) + Number(b.dataset.d)));
+      picked.set(a.id, n); row.querySelector(".n").textContent = n; buzz(8); renderTotal(); pulseTotal();
+    }));
+    box.appendChild(row);
+  });
+}
+
+function pulseTotal() {
+  const el = document.getElementById("now");
+  el.animate([{ transform: "scale(1)" }, { transform: "scale(1.12)" }, { transform: "scale(1)" }], { duration: 350, easing: "cubic-bezier(.2,1.6,.4,1)" });
+}
+
+// Frequency switcher
+document.querySelectorAll('#freqChips input').forEach((r) => {
+  r.checked = r.value === state.freq;
+  r.addEventListener("change", () => {
+    state.freq = r.value; burstFrom(document.querySelector(`label[for="${r.id}"]`), 16, 5); buzz(10); renderTotal(); pulseTotal();
+  });
+});
+
+// Next 6 bookable days (Mon to Sat), starting tomorrow.
+const dayBox = document.getElementById("dayChips");
+const fmt = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York" });
+let d = new Date(); let added = 0;
+while (added < 6) {
+  d = new Date(d.getTime() + 86400000);
+  if (d.getDay() === 0) continue;
+  const label = fmt.format(d);
+  const id = "day" + added;
+  const wrap = document.createElement("div"); wrap.className = "chip";
+  wrap.innerHTML = `<input type="radio" name="day" id="${id}"><label for="${id}"></label>`;
+  wrap.querySelector("input").value = label;
+  wrap.querySelector("label").textContent = label;
+  dayBox.appendChild(wrap);
+  added++;
+}
+document.querySelectorAll('#dayChips input, #timeChips input').forEach((r) => r.addEventListener("change", () => {
+  burstFrom(document.querySelector(`label[for="${r.id}"]`), 14, 5); buzz(10);
+}));
+
+// Prefill from the landing page if this is the same phone/browser.
+try {
+  const lead = JSON.parse(localStorage.getItem("rr_lead") || "null");
+  if (lead) { nameEl().value = lead.name || ""; phoneEl().value = lead.phone || ""; addrEl().value = lead.address || ""; }
+} catch {}
+if (!nameEl().value && firstName) nameEl().value = firstName;
+function nameEl() { return document.getElementById("name"); }
+function phoneEl() { return document.getElementById("phone"); }
+function addrEl() { return document.getElementById("address"); }
+
+phoneEl().addEventListener("input", () => {
+  const dd = phoneEl().value.replace(/\D/g, "").replace(/^1(?=\d{10})/, "").slice(0, 10);
+  phoneEl().value = dd.length > 6 ? `(${dd.slice(0, 3)}) ${dd.slice(3, 6)} ${dd.slice(6)}` : dd.length > 3 ? `(${dd.slice(0, 3)}) ${dd.slice(3)}` : dd;
+});
+
+// Sticky total once the big price scrolls away.
+new IntersectionObserver(([e]) => document.getElementById("stickyTotal").classList.toggle("show", !e.isIntersecting)).observe(document.getElementById("totalCard"));
+
+const err = document.getElementById("err");
+function fail(msg, el) {
+  err.textContent = msg; err.style.display = "block";
+  const c = document.getElementById("lockCard"); c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
+  buzz([20, 40, 20]); (el || err).scrollIntoView({ behavior: "smooth", block: "center" });
+}
+const encode = (o) => Object.keys(o).map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(o[k] ?? "")).join("&");
+
+document.getElementById("lockForm").addEventListener("submit", async (e) => {
+  e.preventDefault(); err.style.display = "none";
+  const day = document.querySelector('#dayChips input:checked');
+  const time = document.querySelector('#timeChips input:checked');
+  if (!day) return fail("Pick a day that works", dayBox);
+  if (!time) return fail("Pick morning, afternoon or flexible", document.getElementById("timeChips"));
+  if (!nameEl().value.trim()) return fail("Add your first name", nameEl());
+  if (phoneEl().value.replace(/\D/g, "").length < 10) return fail("Add a 10 digit mobile number", phoneEl());
+
+  const qt = quote();
+  const addons = [...picked].map(([id, n]) => { const a = ADDONS.find((x) => x.id === id); return { label: a.label, price: a.price, qty: n }; });
+  const btn = document.getElementById("lockBtn");
+  btn.disabled = true; btn.textContent = "Sending your request…"; burstFrom(btn, 30, 8); buzz(15);
+  try {
+    const r = await fetch("/api/lock-in", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+      ...state, name: nameEl().value.trim(), phone: phoneEl().value, address: addrEl().value.trim(),
+      company: document.getElementById("company").value, addons, day: day.value, time: time.value, ...utm,
+    }) });
+    const res = await r.json().catch(() => ({ ok: false, error: "Couldn't save. Please text us at (561) 556 5899." }));
+    if (!r.ok || !res.ok) throw new Error(res.error || "Something went wrong");
+  } catch (ex) {
+    btn.disabled = false; btn.textContent = "Lock in my spot";
+    return fail((ex && ex.message) || "Couldn't save. Please text us at (561) 556 5899.");
+  }
+  fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: encode({
+    "form-name": "offer-50-booking", name: nameEl().value.trim(), phone: phoneEl().value, address: addrEl().value.trim(),
+    service: qt.serviceLabel, home: `${bedLabel(qt.beds)}, ${bathLabel(qt.baths)}`, frequency: qt.freqLabel,
+    addons: addons.map((a) => `${a.label}${a.qty > 1 ? " x" + a.qty : ""}`).join(", ") || "none",
+    first_clean_total: money(qt.firstWithOffer + addonTotal()), recurring_price: qt.recurringPerVisit ? money(qt.recurringPerVisit) : "",
+    preferred_day: day.value, preferred_time: time.value, utm_source: utm.utm_source || "", utm_campaign: utm.utm_campaign || "",
+    utm_content: utm.utm_content || "", company: "",
+  }) }).catch(() => {});
+  document.getElementById("lockForm").style.display = "none";
+  const done = document.getElementById("done"); done.style.display = "block";
+  done.scrollIntoView({ behavior: "smooth", block: "center" });
+  bigCelebration(); buzz([30, 50, 30]);
+});
+
+document.querySelectorAll("[data-dock]").forEach((a) => a.addEventListener("click", () => { burstFrom(a, 14, 5); buzz(10); }));
+
+renderMeta(); renderIncluded(); renderAddons(); renderTotal();
+</script>
+</body>
+</html>
