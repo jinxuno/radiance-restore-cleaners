@@ -1,0 +1,7 @@
+# Site lives in radiance-restore-website/. Netlify's UI base is the repo root,
+# so point it at the publish folder and the functions inside it.
+[build]
+  publish = "radiance-restore-website"
+
+[functions]
+  directory = "radiance-restore-website/netlify/functions"
