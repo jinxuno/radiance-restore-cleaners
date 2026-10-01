@@ -36,6 +36,14 @@ export default async (req: Request, context: Context) => {
   }
   const source = clip(b.utm_source, 80) || refHost || "direct";
   const where = [context.geo?.city, context.geo?.subdivision?.code].filter(Boolean).join(", ") || "unknown location";
+
+  // Every real customer is in Florida. Views from anywhere else are Meta's ad review
+  // systems and cloud data centers (Prineville OR, Altoona IA, Gallatin TN, Clonee IE,
+  // Lulea SE...), so log them but don't ping Slack.
+  if (context.geo?.subdivision?.code && (context.geo?.country?.code !== "US" || context.geo.subdivision.code !== "FL")) {
+    console.log(`Skipped non Florida view (${where}) from ${clip(b.utm_source, 80) || "direct"}`);
+    return new Response(null, { status: 204 });
+  }
   const device = /mobile|iphone|android/i.test(req.headers.get("user-agent") || "") ? "phone" : "computer";
 
   const line =
