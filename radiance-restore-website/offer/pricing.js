@@ -71,3 +71,52 @@ export function bathLabel(baths) {
 }
 
 export const money = (n) => "$" + Number(n).toLocaleString("en-US");
+
+// What each service includes (from the service pages and the standard checklist).
+export const INCLUDED = {
+  standard: [
+    "Floors vacuumed, swept and mopped, including under furniture where reachable",
+    "Furniture, shelves, woodwork and door frames dusted",
+    "Ceiling fans dusted",
+    "Window sills and ledges dusted",
+    "Countertops and backsplash cleaned",
+    "Sinks cleaned, disinfected and chrome shined",
+    "Stovetop and outside of appliances cleaned",
+    "Microwave cleaned inside and out",
+    "Tubs, showers, tile and glass doors cleaned and disinfected",
+    "Toilets and vanities cleaned and disinfected",
+    "Mirrors cleaned",
+    "Trash emptied and relined",
+    "Beds made",
+  ],
+  deep: [
+    "Baseboards hand washed and scrubbed",
+    "Blinds and shutters hand washed and wiped",
+    "Doors, frames, hinges and jambs wiped",
+    "Cabinet doors, drawers and handles cleaned",
+    "Inside of the oven wiped down",
+    "Light fixtures, vents, switches and outlets dusted",
+    "Interior windows cleaned streak free",
+    "Walls spot treated for marks and scuffs",
+    "Upholstery and furniture hand vacuumed",
+  ],
+  move: [
+    "Inside the refrigerator cleaned",
+    "Inside all cabinets and drawers cleaned",
+    "Inside all appliances cleaned",
+  ],
+};
+
+export function includedFor(service) {
+  const list = [...INCLUDED.standard];
+  if (service !== "standard") list.push(...INCLUDED.deep);
+  if (service === "move") list.push(...INCLUDED.move);
+  return list;
+}
+
+// Short "what's included" summary for the landing page picker.
+export function includedPeek(service) {
+  if (service === "deep") return { lead: "Everything in a standard clean, plus:", items: INCLUDED.deep };
+  if (service === "move") return { lead: "Everything in a deep clean, plus:", items: INCLUDED.move.concat(["Baseboards, blinds, doors and cabinet fronts done by hand"]) };
+  return { lead: "Every standard clean includes:", items: INCLUDED.standard };
+}

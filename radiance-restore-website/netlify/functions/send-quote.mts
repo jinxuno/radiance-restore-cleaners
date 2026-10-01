@@ -72,7 +72,7 @@ export default async (req: Request, context: Context) => {
 
   const homeLine = `${bedLabel(quote.beds)}, ${bathLabel(quote.baths)}`;
   const recurringLine = quote.recurringPerVisit
-    ? `\nThen ${money(quote.recurringPerVisit)} per visit, ${quote.freqLabel.toLowerCase()}, same cleaner every time.`
+    ? `\nThen ${money(quote.recurringPerVisit)} per visit, ${quote.freqLabel.toLowerCase()}.`
     : "";
   const sms =
     `Hi ${firstName}, this is Radiance Restore Cleaners. Your exact price for a ${quote.serviceShort} (${homeLine}):\n` +
@@ -108,8 +108,9 @@ export default async (req: Request, context: Context) => {
   }
 
   // 2) Hand the lead to the existing Jobber Zap (same payload shape as the homepage calculator).
-  tasks.push(
-    fetch(Netlify.env.get("ZAPIER_WEBHOOK_URL") || DEFAULT_ZAP, {
+  const zapUrl = Netlify.env.get("ZAPIER_WEBHOOK_URL") || DEFAULT_ZAP;
+  if (zapUrl !== "off") tasks.push(
+    fetch(zapUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

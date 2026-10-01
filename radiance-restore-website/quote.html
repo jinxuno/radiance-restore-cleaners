@@ -42,6 +42,19 @@
   .pay li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-weight:700;font-size:13px}
   .sticky-total{position:sticky;top:0;z-index:20;background:rgba(255,240,243,.95);backdrop-filter:blur(6px);padding:8px 0;text-align:center;font-weight:800;display:none}
   .sticky-total.show{display:block}
+  .tiers{display:grid;gap:8px}
+  .tier{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;color:var(--ink);transition:border-color .2s,background .2s,transform .12s}
+  .tier:active{transform:scale(.98)}
+  .tier[aria-checked="true"]{border-color:var(--wine);background:#fff7f9}
+  .tier .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--soft);flex:none;display:grid;place-items:center}
+  .tier[aria-checked="true"] .dot{border-color:var(--wine)}
+  .tier[aria-checked="true"] .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--wine)}
+  .tier .nm{flex:1;min-width:0}
+  .tier .nm strong{display:block;font-size:16px}
+  .tier .nm small{display:block;color:var(--muted);font-size:13px;line-height:1.3}
+  .tier .pr{text-align:right;font-weight:800;white-space:nowrap}
+  .tier .pr small{display:block;font-weight:700;font-size:12px;color:var(--ok)}
+  .tier:focus-visible{outline:3px solid var(--strong);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -73,6 +86,9 @@
     <span class="saving">You save $50</span>
     <div class="rec" id="rec"></div>
   </div>
+
+  <h2 class="sec">Your clean</h2>
+  <div class="tiers" id="tiers" role="radiogroup" aria-label="Type of clean"></div>
 
   <h2 class="sec">How often?</h2>
   <div class="chips freq" id="freqChips">
@@ -131,7 +147,6 @@
 
   <section class="block" style="padding-bottom:10px">
     <details><summary>Is this price final?</summary><p>Yes, for the home size you picked. If the home turns out much larger or needs extra work, we'll tell you before we start. No surprises.</p></details>
-    <details><summary>Can I keep the same cleaner?</summary><p>Yes. On recurring plans you get the same trained cleaner every visit.</p></details>
   </section>
 </main>
 
@@ -144,7 +159,7 @@
 </nav>
 
 <script type="module">
-import { buildQuote, money, bedLabel, bathLabel, SERVICES } from "/offer/pricing.js";
+import { buildQuote, money, bedLabel, bathLabel, SERVICES, includedFor } from "/offer/pricing.js";
 import { burstFrom, bigCelebration, buzz, getUtm, trackView, countUp } from "/offer/fun.js";
 
 const q = new URLSearchParams(location.search);
@@ -174,39 +189,6 @@ const ADDONS = [
   { id: "cabinets", label: "Inside cabinets and drawers", note: "We'll confirm the price by text", price: null, hideFor: ["move"] },
 ];
 
-const INCLUDED = {
-  standard: [
-    "Floors vacuumed, swept and mopped, including under furniture where reachable",
-    "Furniture, shelves, woodwork and door frames dusted",
-    "Ceiling fans dusted",
-    "Window sills and ledges dusted",
-    "Countertops and backsplash cleaned",
-    "Sinks cleaned, disinfected and chrome shined",
-    "Stovetop and outside of appliances cleaned",
-    "Microwave cleaned inside and out",
-    "Tubs, showers, tile and glass doors cleaned and disinfected",
-    "Toilets and vanities cleaned and disinfected",
-    "Mirrors cleaned",
-    "Trash emptied and relined",
-    "Beds made",
-  ],
-  deep: [
-    "Baseboards hand washed and scrubbed",
-    "Blinds and shutters hand washed and wiped",
-    "Doors, frames, hinges and jambs wiped",
-    "Cabinet doors, drawers and handles cleaned",
-    "Inside of the oven wiped down",
-    "Light fixtures, vents, switches and outlets dusted",
-    "Interior windows cleaned streak free",
-    "Walls spot treated for marks and scuffs",
-    "Upholstery and furniture hand vacuumed",
-  ],
-  move: [
-    "Inside the refrigerator cleaned",
-    "Inside all cabinets and drawers cleaned",
-    "Inside all appliances cleaned",
-  ],
-};
 
 const picked = new Map(); // id -> qty
 
@@ -215,6 +197,39 @@ function addonTotal() {
   let t = 0;
   for (const [id, n] of picked) { const a = ADDONS.find((x) => x.id === id); if (a && a.price) t += a.price * n; }
   return t;
+}
+
+
+const TIER_NOTE = {
+  standard: "Kitchen, bathrooms, dusting, floors",
+  deep: "Adds baseboards, blinds, doors, inside the oven",
+  move: "Adds inside the fridge, cabinets and drawers",
+};
+function renderTiers() {
+  const box = document.getElementById("tiers");
+  box.innerHTML = "";
+  const base = buildQuote({ ...state, service: "standard" }).firstWithOffer;
+  const current = quote().firstWithOffer;
+  ["standard", "deep", "move"].forEach((s) => {
+    const t = buildQuote({ ...state, service: s });
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tier"; b.setAttribute("role", "radio");
+    b.setAttribute("aria-checked", String(s === state.service));
+    const diff = t.firstWithOffer - current;
+    const tag = s === state.service ? "Selected" : diff > 0 ? `Upgrade +${money(diff)}` : `Save ${money(-diff)}`;
+    b.innerHTML = `<span class="dot"></span><span class="nm"><strong></strong><small></small></span><span class="pr"></span>`;
+    b.querySelector("strong").textContent = SERVICES[s].label;
+    b.querySelector(".nm small").textContent = TIER_NOTE[s];
+    b.querySelector(".pr").innerHTML = `${money(t.firstWithOffer)}<small></small>`;
+    b.querySelector(".pr small").textContent = tag;
+    b.addEventListener("click", () => {
+      if (s === state.service) return;
+      state.service = s;
+      burstFrom(b, 18, 6); buzz(10);
+      renderMeta(); renderTiers(); renderIncluded(); renderAddons(); renderTotal(); pulseTotal();
+    });
+    box.appendChild(b);
+  });
 }
 
 function renderMeta() {
@@ -227,9 +242,8 @@ function renderMeta() {
 }
 
 function renderIncluded() {
-  const list = [...INCLUDED.standard];
-  if (state.service !== "standard") list.push(...INCLUDED.deep);
-  if (state.service === "move") list.push(...INCLUDED.move);
+  const list = includedFor(state.service);
+  document.querySelectorAll("#included + button").forEach((b) => b.remove());
   document.getElementById("incTitle").textContent = `What's included in your ${SERVICES[state.service].label.toLowerCase()}`;
   const ul = document.getElementById("included");
   ul.innerHTML = "";
@@ -253,7 +267,7 @@ function renderTotal() {
   else nowEl.textContent = money(qt.firstWithOffer + extra);
   const rec = document.getElementById("rec");
   rec.innerHTML = qt.recurringPerVisit
-    ? `Then <strong>${money(qt.recurringPerVisit)}</strong> per visit, ${qt.freqLabel.toLowerCase()}<br><span style="font-weight:600;color:var(--muted);font-size:14px">Same cleaner every time. Cancel or pause anytime.</span>`
+    ? `Then <strong>${money(qt.recurringPerVisit)}</strong> per visit, ${qt.freqLabel.toLowerCase()}<br><span style="font-weight:600;color:var(--muted);font-size:14px">Cancel or pause anytime.</span>`
     : `<span style="font-weight:600;color:var(--muted);font-size:14px">Want it to stay this clean? Every other week is just ${money(Math.round(buildQuote({ ...state, freq: "biweekly" }).recurringPerVisit))} per visit.</span>`;
   const st = document.getElementById("stickyTotal");
   st.textContent = `First clean ${money(qt.firstWithOffer + extra)}${qt.recurringPerVisit ?` · then ${money(qt.recurringPerVisit)}/visit` : ""}`;
@@ -393,7 +407,7 @@ document.getElementById("lockForm").addEventListener("submit", async (e) => {
 
 document.querySelectorAll("[data-dock]").forEach((a) => a.addEventListener("click", () => { burstFrom(a, 14, 5); buzz(10); }));
 
-renderMeta(); renderIncluded(); renderAddons(); renderTotal();
+renderMeta(); renderTiers(); renderIncluded(); renderAddons(); renderTotal();
 </script>
 </body>
 </html>

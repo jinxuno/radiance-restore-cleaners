@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Get $50 Off Your First Clean | Radiance Restore Cleaners</title>
-<meta name="description" content="Tap a few quick answers and we'll text you your exact house cleaning price, with $50 off your first clean. Same trained cleaner every visit. Pay after the clean.">
+<meta name="description" content="Tap a few quick answers and we'll text you your exact house cleaning price, with $50 off your first clean. Pay after the clean.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://www.radiancerestore.org/50-off">
 <meta name="theme-color" content="#a4133c">
@@ -36,7 +36,7 @@
     <p class="sub">Tap a few quick answers. We'll text your exact price in seconds. No calls, no pressure.</p>
     <ul class="trust">
       <li>5.0 on Google</li>
-      <li>Same cleaner every visit</li>
+      <li>Cancel or pause anytime</li>
       <li>Pay after the clean</li>
     </ul>
   </div>
@@ -55,6 +55,11 @@
             <div class="chip"><input type="radio" name="service" id="s-standard" value="standard"><label for="s-standard">Standard</label></div>
             <div class="chip"><input type="radio" name="service" id="s-deep" value="deep"><label for="s-deep">Deep</label></div>
             <div class="chip"><input type="radio" name="service" id="s-move" value="move"><label for="s-move">Move in / out</label></div>
+          </div>
+          <div class="peek" id="peek" hidden aria-live="polite">
+            <p class="peek-lead" id="peekLead"></p>
+            <ul class="peek-list" id="peekList"></ul>
+            <button type="button" class="peek-more" id="peekMore"></button>
           </div>
         </fieldset>
 
@@ -131,7 +136,7 @@
       <ol class="steps">
         <li>Tap your answers above<span>Takes about 20 seconds.</span></li>
         <li>Get your exact price by text<span>With $50 already taken off your first clean.</span></li>
-        <li>Pick your day and relax<span>Same trained cleaner every visit. Pay only after the clean.</span></li>
+        <li>Pick your day and relax<span>Pay only after the clean.</span></li>
       </ol>
     </div>
   </section>
@@ -139,10 +144,7 @@
   <section class="block" style="padding-top:0">
     <div class="wrap">
       <h2>Real results from our team</h2>
-      <div class="ba">
-        <figure><img src="/oven-before.jpg" alt="Oven interior before cleaning" loading="lazy" width="400" height="533"><figcaption>Before</figcaption></figure>
-        <figure><img src="/oven-after.jpg" alt="Same oven interior after cleaning" loading="lazy" width="400" height="533"><figcaption>After</figcaption></figure>
-      </div>
+      <img class="ba-one" src="/offer/before-after.jpg" alt="Before and after: a cluttered room restored by Radiance Restore Cleaners" loading="lazy" width="900" height="900">
     </div>
   </section>
 
@@ -150,7 +152,7 @@
     <div class="wrap">
       <h2>Questions</h2>
       <details><summary>When do I pay?</summary><p>Only after your clean is finished and you're happy with it. We keep a card on file to hold your spot, and nothing is charged until the job is done.</p></details>
-      <details><summary>Who will clean my home?</summary><p>A vetted, trained cleaner from our team. On recurring plans you get the same cleaner every visit.</p></details>
+      <details><summary>Who will clean my home?</summary><p>A vetted, trained cleaner from our team.</p></details>
       <details><summary>Where do you clean?</summary><p>Palm Beach County, including Jupiter, Palm Beach Gardens, Wellington, Boca Raton and Delray Beach, plus Parkland.</p></details>
       <details><summary>How does the $50 off work?</summary><p>It comes off your first clean automatically. Your texted price already includes it.</p></details>
     </div>
@@ -166,7 +168,7 @@
 </nav>
 
 <script type="module">
-import { buildQuote, money, bedLabel, bathLabel } from "/offer/pricing.js";
+import { buildQuote, money, bedLabel, bathLabel, includedPeek } from "/offer/pricing.js";
 import { burstFrom, bigCelebration, buzz, getUtm, trackView } from "/offer/fun.js";
 
 const utm = getUtm();
@@ -190,6 +192,30 @@ function progress() {
   barLabel.textContent = done >= 5 ? "Ready" : `Step ${done + 1} of 5`;
 }
 
+
+// Show what's included as soon as they pick a type of clean.
+const peek = document.getElementById("peek");
+function renderPeek(service) {
+  const { lead, items } = includedPeek(service);
+  document.getElementById("peekLead").textContent = lead;
+  const ul = document.getElementById("peekList"); ul.innerHTML = "";
+  items.forEach((t, i) => { const li = document.createElement("li"); li.textContent = t; if (i >= 5) li.hidden = true; ul.appendChild(li); });
+  const more = document.getElementById("peekMore");
+  more.hidden = items.length <= 5;
+  more.textContent = `See all ${items.length}`;
+  more.onclick = () => { ul.querySelectorAll("li[hidden]").forEach((li) => (li.hidden = false)); more.hidden = true; };
+  const hint = document.getElementById("peekUp");
+  if (hint) hint.remove();
+  if (service !== "move") {
+    const next = service === "standard" ? "deep" : "move";
+    const p = document.createElement("p"); p.id = "peekUp"; p.className = "peek-up";
+    p.textContent = service === "standard" ? "Want baseboards, blinds and inside the oven too? Choose Deep." : "Moving? Move in / out adds inside the fridge, cabinets and drawers.";
+    peek.appendChild(p);
+  }
+  peek.hidden = false;
+}
+form.querySelectorAll('input[name="service"]').forEach((r) => r.addEventListener("change", () => renderPeek(r.value)));
+
 // Tap feedback: confetti puff, haptic tick, then glide to the next question.
 form.querySelectorAll('.chips input[type="radio"]').forEach((input) => {
   input.addEventListener("change", () => {
@@ -197,6 +223,7 @@ form.querySelectorAll('.chips input[type="radio"]').forEach((input) => {
     burstFrom(label, 16, 5);
     buzz(10);
     progress();
+    if (input.name === "service") return; // let them read what is included first
     const fs = input.closest("fieldset").nextElementSibling;
     if (fs && fs.tagName === "FIELDSET") {
       const firstUnanswered = fs.querySelector("input");

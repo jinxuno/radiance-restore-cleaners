@@ -1,7 +1,7 @@
 :root{
   --bg:#fff0f3; --card:#ffffff; --blush:#ffccd5; --soft:#ffb3c1; --mid:#ff8fa3; --accent:#ff758f;
   --strong:#ff4d6d; --btn:#e0284a; --deep:#c9184a; --wine:#a4133c; --ink:#590d22; --ink-soft:#800f2f;
-  --muted:#7a4a57; --line:#ffd6de; --ok:#1f8a5b;
+  --muted:#7a4a57; --line:#ffd6de; --ok:#17734b;
   --sans: ui-sans-serif, -apple-system, "Segoe UI", Inter, system-ui, sans-serif;
   --serif: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
   --r:18px; --shadow:0 10px 30px rgba(164,19,60,.12);
@@ -116,3 +116,13 @@ footer.mini{text-align:center;font-size:13px;color:var(--muted);padding:20px 16p
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* What's included peek on the landing page */
+.peek{margin-top:12px;background:var(--bg);border-radius:14px;padding:12px 14px;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+.peek-lead{margin:0 0 6px;font-weight:800;font-size:14px;color:var(--ink)}
+.peek-list{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.peek-list li{position:relative;padding-left:22px;font-size:14px;line-height:1.35;color:var(--ink-soft)}
+.peek-list li::before{content:"";position:absolute;left:3px;top:6px;width:9px;height:5px;border-left:2px solid var(--ok);border-bottom:2px solid var(--ok);transform:rotate(-45deg)}
+.peek-more{margin-top:6px;background:none;border:0;padding:0;font:inherit;font-weight:700;font-size:13.5px;color:var(--wine);text-decoration:underline;cursor:pointer}
+.peek-up{margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)}
+.ba-one{width:100%;height:auto;border-radius:var(--r);box-shadow:var(--shadow)}
