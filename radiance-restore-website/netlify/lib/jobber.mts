@@ -103,3 +103,107 @@ export function parseAddress(raw: string) {
   else if (parts.length === 2) city = parts[1].replace(/\b(FL|Florida)\b.*$/i, "").replace(/\d{5}.*/, "").trim();
   return { street1, city, province: "FL", postalCode: zip, country: "US" };
 }
+
+// ---- $50 offer booking: find/create client + property, then a sent quote with card required ----
+type BookingInput = {
+  name: string;
+  phone: string; // +1XXXXXXXXXX
+  address: string;
+  source: string;
+  title: string;
+  message: string;
+  lines: { name: string; description?: string; unitPrice: number; quantity?: number }[];
+  discount: number;
+};
+
+const digits10 = (p: string) => p.replace(/\D/g, "").slice(-10);
+const pretty = (p: string) => {
+  const d = digits10(p);
+  return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+};
+
+async function findClientByPhone(phone: string) {
+  const want = digits10(phone);
+  for (const term of [want, pretty(phone)]) {
+    const d = await gql(
+      `query($t: String!) { clients(searchTerm: $t, first: 10) { nodes { id name phones { normalizedPhoneNumber number }
+        clientProperties { nodes { id address { street1 postalCode } } } } } }`,
+      { t: term },
+    );
+    const hit = d.clients.nodes.find((c: any) => (c.phones || []).some((ph: any) => digits10(ph.normalizedPhoneNumber || ph.number || "") === want));
+    if (hit) return hit;
+  }
+  return null;
+}
+
+export async function createOfferQuote(b: BookingInput) {
+  const addr = parseAddress(b.address);
+  const [firstName, ...rest] = b.name.trim().split(/\s+/);
+  let client = await findClientByPhone(b.phone);
+  let propertyId: string | undefined;
+
+  if (!client) {
+    const d = await gql(
+      `mutation($input: ClientCreateInput!) { clientCreate(input: $input) {
+        client { id name clientProperties { nodes { id } } } userErrors { message path } } }`,
+      {
+        input: {
+          firstName: firstName || "Customer",
+          lastName: rest.join(" ") || undefined,
+          phones: [{ number: pretty(b.phone), primary: true, description: "MOBILE", smsAllowed: true }],
+          properties: [{ address: addr }],
+          sourceAttribution: { sourceText: b.source },
+        },
+      },
+    );
+    const err = userErrors(d.clientCreate);
+    if (err) throw new Error(`clientCreate: ${err}`);
+    client = d.clientCreate.client;
+    propertyId = client.clientProperties?.nodes?.[0]?.id;
+  } else {
+    const props = client.clientProperties?.nodes || [];
+    const street = addr.street1.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 12);
+    const same = props.find((p: any) => street && (p.address?.street1 || "").toLowerCase().replace(/[^a-z0-9]/g, "").startsWith(street));
+    propertyId = same?.id;
+  }
+
+  if (!propertyId) {
+    const d = await gql(
+      `mutation($id: EncodedId!, $input: PropertyCreateInput!) { propertyCreate(clientId: $id, input: $input) {
+        properties { id } userErrors { message path } } }`,
+      { id: client.id, input: { properties: [{ address: addr }] } },
+    );
+    const err = userErrors(d.propertyCreate);
+    if (err) throw new Error(`propertyCreate: ${err}`);
+    propertyId = d.propertyCreate.properties?.[0]?.id;
+  }
+  if (!propertyId) throw new Error("no property id");
+
+  const d = await gql(
+    `mutation($a: QuoteCreateAttributes!) { quoteCreate(attributes: $a) {
+      quote { id quoteNumber clientHubUri jobberWebUri amounts { total } } userErrors { message path } } }`,
+    {
+      a: {
+        clientId: client.id,
+        propertyId,
+        title: b.title,
+        message: b.message,
+        lineItems: b.lines.map((l) => ({
+          name: l.name,
+          description: l.description,
+          quantity: l.quantity ?? 1,
+          unitPrice: l.unitPrice,
+          saveToProductsAndServices: false,
+          category: "SERVICE",
+        })),
+        discount: { rate: b.discount, type: "Unit" },
+        mandatoryPaymentMethodOnFile: true,
+        allowClientHubCreditCardPayments: true,
+        transitionQuoteTo: "AWAITING_RESPONSE",
+      },
+    },
+  );
+  const err = userErrors(d.quoteCreate);
+  if (err) throw new Error(`quoteCreate: ${err}`);
+  return { client, quote: d.quoteCreate.quote };
+}

@@ -129,8 +129,8 @@ fbq('init','1728232545055846');fbq('track','PageView');
         <input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" required placeholder="(561) 555 0123">
       </div>
       <div class="field">
-        <label for="address">Home address <span class="opt">Optional</span></label>
-        <input id="address" autocomplete="street-address" maxlength="200" placeholder="Street, city">
+        <label for="address">Home address</label>
+        <input id="address" autocomplete="street-address" maxlength="200" placeholder="Street, city, ZIP" required>
       </div>
       <div class="hp" aria-hidden="true"><label for="company">Company</label><input id="company" tabindex="-1" autocomplete="off"></div>
       <button class="cta" type="submit" id="lockBtn">Lock in my spot</button>
@@ -139,8 +139,8 @@ fbq('init','1728232545055846');fbq('track','PageView');
     <div class="done" id="done" aria-live="polite">
       <div class="big"><svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true" style="margin:0 auto"><circle cx="12" cy="12" r="11" fill="#1f8a5b"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h2>You're almost booked!</h2>
-      <p>Watch your texts for a secure Jobber link to confirm and save your card. Nothing is charged until after your clean.</p>
-      <a class="cta secondary" href="https://clienthub.getjobber.com/client_hubs/469c265b-c484-4c2c-9d0b-54c25b0fa906/public/work_request/embedded_work_request_form?form_id=4962891" target="_blank" rel="noopener">Prefer to book in Jobber now? →</a>
+      <p id="doneMsg">Watch your texts for a secure link to approve your quote and save a card. Nothing is charged until after your clean.</p>
+      <a class="cta" id="approveLink" href="#" target="_blank" rel="noopener" hidden>Approve and save my card</a>
     </div>
   </div>
 
@@ -380,6 +380,7 @@ document.getElementById("lockForm").addEventListener("submit", async (e) => {
   if (!time) return fail("Pick morning, afternoon or flexible", document.getElementById("timeChips"));
   if (!nameEl().value.trim()) return fail("Add your first name", nameEl());
   if (phoneEl().value.replace(/\D/g, "").length < 10) return fail("Add a 10 digit mobile number", phoneEl());
+  if (addrEl().value.trim().length < 6) return fail("Add your home address so we can book the clean", addrEl());
 
   const qt = quote();
   const addons = [...picked].map(([id, n]) => { const a = ADDONS.find((x) => x.id === id); return { label: a.label, price: a.price, qty: n }; });
@@ -392,6 +393,10 @@ document.getElementById("lockForm").addEventListener("submit", async (e) => {
     }) });
     const res = await r.json().catch(() => ({ ok: false, error: "Couldn't save. Please text us at (561) 556 5899." }));
     if (!r.ok || !res.ok) throw new Error(res.error || "Something went wrong");
+    if (res.approveUrl) {
+      const a = document.getElementById("approveLink"); a.href = res.approveUrl; a.hidden = false;
+      document.getElementById("doneMsg").textContent = "Your quote is ready. Approve it and save a card to lock in your day. We also texted you the link. Nothing is charged until after your clean.";
+    }
   } catch (ex) {
     btn.disabled = false; btn.textContent = "Lock in my spot";
     return fail((ex && ex.message) || "Couldn't save. Please text us at (561) 556 5899.");

@@ -7,10 +7,12 @@ function slackUrl(): string | undefined {
   return m ? m[0] : undefined;
 }
 import { buildQuote, bedLabel, bathLabel, money } from "../../offer/pricing.js";
+import { createOfferQuote } from "../lib/jobber.mts";
 
 // Called when a customer taps "Lock in my spot" on /quote.
 // Re-prices on the server, alerts the team in Slack, and texts the customer a confirmation.
-// The team then sends the Jobber quote/booking link, where Jobber Payments saves the card.
+// Creates the client and a sent Jobber quote ($50 off, card on file required) and texts the
+// customer the client hub link to approve. If Jobber is unavailable it falls back to a manual follow up.
 
 function clip(v: unknown, n = 120): string {
   return String(v ?? "").trim().slice(0, n);
@@ -53,6 +55,46 @@ export default async (req: Request, context: Context) => {
     ? addons.map((a) => `${a.label}${a.qty > 1 ? ` x${a.qty}` : ""} (${a.price ? money(a.price * a.qty) : "price on site"})`).join(", ")
     : "none";
 
+  const address = clip(b.address, 200);
+  if (address.length < 6) return Response.json({ ok: false, error: "Please add your home address so we can book the clean." }, { status: 400 });
+
+  const source = clip(b.utm_source, 80) || "direct";
+  const first = name.split(/\s+/)[0];
+
+  // 1) Jobber: client + property + quote the customer can approve with a saved card.
+  let jobber: { quoteNumber: number; clientHubUri: string; jobberWebUri: string } | null = null;
+  let jobberError = "";
+  try {
+    const lines = [
+      {
+        name: `${quote.serviceLabel}: ${bedLabel(quote.beds)}, ${bathLabel(quote.baths)}`,
+        description: `First clean. ${quote.freqLabel}${quote.recurringPerVisit ? `, then ${money(quote.recurringPerVisit)} per visit` : ""}.`,
+        unitPrice: quote.firstFull,
+      },
+      ...addons.filter((a) => a.price).map((a) => ({ name: a.label, unitPrice: a.price as number, quantity: a.qty })),
+    ];
+    const askAddons = addons.filter((a) => !a.price).map((a) => a.label);
+    const message =
+      `Hi ${first}! Here's your first clean with $50 off. Preferred: ${day}, ${time.toLowerCase()}. ` +
+      (askAddons.length ? `We'll confirm pricing for: ${askAddons.join(", ")}. ` : "") +
+      (quote.recurringPerVisit ? `After your first clean, ${quote.freqLabel.toLowerCase()} visits are ${money(quote.recurringPerVisit)} each. ` : "") +
+      `Approve below and save a card. Nothing is charged until after your clean.`;
+    const r = await createOfferQuote({
+      name,
+      phone,
+      address,
+      source: `$50 off page (${source}${b.utm_campaign ? `, ${clip(b.utm_campaign, 60)}` : ""})`,
+      title: `$50 Off First Clean: ${quote.serviceLabel}`,
+      message,
+      lines,
+      discount: 50,
+    });
+    jobber = r.quote;
+  } catch (e) {
+    jobberError = String((e as Error)?.message || e).slice(0, 300);
+    console.error("Jobber quote failed", e);
+  }
+
   const tasks: Promise<unknown>[] = [];
   const slack = slackUrl();
   if (slack) {
@@ -61,18 +103,21 @@ export default async (req: Request, context: Context) => {
       `${quote.serviceLabel} · ${bedLabel(quote.beds)}, ${bathLabel(quote.baths)} · ${quote.freqLabel}\n` +
       `First clean ${money(quote.firstWithOffer)}${addonTotal ? ` + add ons ${money(addonTotal)} = ${money(quote.firstWithOffer + addonTotal)}` : ""}` +
       (quote.recurringPerVisit ? ` · then ${money(quote.recurringPerVisit)}/visit` : "") +
-      `\nAdd ons: ${addonText}\nPreferred: ${day}, ${time}\nAddress: ${clip(b.address, 200) || "ask"}\n` +
-      `Source: ${clip(b.utm_source, 80) || "direct"} · Campaign: ${clip(b.utm_campaign, 120) || "none"} · Ad: ${clip(b.utm_content, 120) || "none"}\n` +
-      `*Next:* send the Jobber quote link so they can save a card.`;
+      `\nAdd ons: ${addonText}\nPreferred: ${day}, ${time}\nAddress: ${address}\n` +
+      `Source: ${source} · Campaign: ${clip(b.utm_campaign, 120) || "none"} · Ad: ${clip(b.utm_content, 120) || "none"}\n` +
+      (jobber
+        ? `:white_check_mark: Jobber quote #${jobber.quoteNumber} sent and texted to them. You'll get a ping when they approve: ${jobber.jobberWebUri}`
+        : `:warning: Jobber quote NOT created (${jobberError || "unknown"}). *Send them a quote from Jobber manually.*`);
     tasks.push(fetch(slack, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) }).catch(() => {}));
   }
 
   const quoKey = Netlify.env.get("QUO_API_KEY");
   if (quoKey) {
-    const first = name.split(/\s+/)[0];
-    const msg =
-      `Thanks, ${first}. We got your request for ${day} (${time.toLowerCase()}) for your ${quote.serviceShort}. ` +
-      `We'll text you a secure Jobber link in a few minutes to confirm and save a card. Nothing is charged until after your clean.`;
+    const msg = jobber
+      ? `Hi ${first}, it's Radiance Restore Cleaners. Your quote is ready: ${money(quote.firstWithOffer + addonTotal)} for your first ${quote.serviceShort} with $50 off. ` +
+        `Tap to approve and save a card (nothing is charged until after your clean): ${jobber.clientHubUri}`
+      : `Thanks, ${first}. We got your request for ${day} (${time.toLowerCase()}) for your ${quote.serviceShort}. ` +
+        `We'll text you a secure Jobber link shortly to confirm and save a card. Nothing is charged until after your clean.`;
     tasks.push(
       fetch("https://api.openphone.com/v1/messages", {
         method: "POST",
@@ -83,7 +128,7 @@ export default async (req: Request, context: Context) => {
   }
 
   await Promise.all(tasks);
-  return Response.json({ ok: true, total: quote.firstWithOffer + addonTotal });
+  return Response.json({ ok: true, total: quote.firstWithOffer + addonTotal, approveUrl: jobber?.clientHubUri || null });
 };
 
 export const config: Config = {
