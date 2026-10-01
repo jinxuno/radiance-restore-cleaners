@@ -1,0 +1,8 @@
+{
+  "name": "radiance-restore-website",
+  "private": true,
+  "description": "Static site. Dependencies here are only for Netlify Functions.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
