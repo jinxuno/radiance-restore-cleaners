@@ -13,6 +13,11 @@
 <meta property="og:image" content="https://www.radiancerestore.org/og-card.jpg">
 <link rel="icon" href="/logo.png">
 <link rel="stylesheet" href="/offer/offer.css">
+<!-- Meta Pixel (Radiance Restore Cleaners dataset) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1728232545055846');fbq('track','PageView');
+</script>
 </head>
 <body>
 
@@ -312,6 +317,7 @@ form.addEventListener("submit", async (e) => {
   document.getElementById("doneRec").textContent = q.recurringPerVisit ? `first clean, then ${money(q.recurringPerVisit)} per visit` : "for your clean";
   document.getElementById("doneLink").href = res.quoteUrl.replace(/^https?:\/\/[^/]+/, "");
   done.scrollIntoView({ behavior: "smooth", block: "center" });
+  try { window.fbq && fbq("track", "Lead", { value: q.firstWithOffer, currency: "USD", content_name: q.serviceLabel }); } catch {}
   bigCelebration();
   buzz([30, 50, 30]);
 });
