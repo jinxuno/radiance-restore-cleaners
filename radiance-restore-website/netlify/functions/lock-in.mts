@@ -1,4 +1,11 @@
 import type { Context, Config } from "@netlify/functions";
+
+// Accept either the bare webhook link or a pasted sample curl command that contains it.
+function slackUrl(): string | undefined {
+  const raw = Netlify.env.get("SLACK_WEBHOOK_URL") || "";
+  const m = raw.match(/https:\/\/hooks\.slack\.com\/services\/[A-Za-z0-9/]+/);
+  return m ? m[0] : undefined;
+}
 import { buildQuote, bedLabel, bathLabel, money } from "../../offer/pricing.js";
 
 // Called when a customer taps "Lock in my spot" on /quote.
@@ -47,7 +54,7 @@ export default async (req: Request, context: Context) => {
     : "none";
 
   const tasks: Promise<unknown>[] = [];
-  const slack = Netlify.env.get("SLACK_WEBHOOK_URL");
+  const slack = slackUrl();
   if (slack) {
     const text =
       `:rotating_light: *${name} wants to lock in!* ${phone}\n` +

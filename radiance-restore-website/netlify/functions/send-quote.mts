@@ -1,4 +1,11 @@
 import type { Context, Config } from "@netlify/functions";
+
+// Accept either the bare webhook link or a pasted sample curl command that contains it.
+function slackUrl(): string | undefined {
+  const raw = Netlify.env.get("SLACK_WEBHOOK_URL") || "";
+  const m = raw.match(/https:\/\/hooks\.slack\.com\/services\/[A-Za-z0-9/]+/);
+  return m ? m[0] : undefined;
+}
 import { buildQuote, bedLabel, bathLabel, money } from "../../offer/pricing.js";
 
 // Env vars (set in Netlify > Project configuration > Environment variables):
@@ -136,7 +143,7 @@ export default async (req: Request, context: Context) => {
   await Promise.all(tasks);
 
   // 3) Slack alert (after the text so it can report whether it went out).
-  const slack = Netlify.env.get("SLACK_WEBHOOK_URL");
+  const slack = slackUrl();
   if (slack) {
     const where = [context.geo?.city, context.geo?.subdivision?.code].filter(Boolean).join(", ");
     const text =
