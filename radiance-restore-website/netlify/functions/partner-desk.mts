@@ -115,8 +115,8 @@ export default async (req: Request, _context: Context) => {
       case "create": {
         const lead = cleanLead(b.lead);
         if (!lead) return json({ ok: false, error: "A company name is required." }, 400);
-        const { modified } = await s.setJSON("lead/" + lead.id, lead, { onlyIfNew: true });
-        if (!modified) return json({ ok: false, error: "That lead already exists." }, 409);
+        if ((await s.getMetadata("lead/" + lead.id)) !== null) return json({ ok: false, error: "That lead already exists." }, 409);
+        await s.setJSON("lead/" + lead.id, lead);
         return json({ ok: true, lead });
       }
 
@@ -126,8 +126,9 @@ export default async (req: Request, _context: Context) => {
         for (const raw of list) {
           const lead = cleanLead(raw);
           if (!lead) { skipped++; continue; }
-          const { modified } = await s.setJSON("lead/" + lead.id, lead, { onlyIfNew: true });
-          if (modified) added++; else skipped++;
+          if ((await s.getMetadata("lead/" + lead.id)) !== null) { skipped++; continue; }
+          await s.setJSON("lead/" + lead.id, lead);
+          added++;
         }
         return json({ ok: true, added, skipped });
       }
@@ -137,7 +138,7 @@ export default async (req: Request, _context: Context) => {
     }
   } catch (e) {
     console.error("partner-desk error", e);
-    return json({ ok: false, error: "The desk couldn't save that. Try again." }, 500);
+    return json({ ok: false, error: "The desk couldn't save that. Try again.", detail: String((e as Error)?.message || e).slice(0, 200) }, 500);
   }
 };
 
