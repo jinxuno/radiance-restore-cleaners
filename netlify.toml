@@ -5,3 +5,15 @@
 
 [functions]
   directory = "radiance-restore-website/netlify/functions"
+
+# Internal VA desk and the partner service guides it links to: keep them out of search results.
+[[headers]]
+  for = "/partner-desk/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/partner-guides/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

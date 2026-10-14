@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Partner Call Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: same working column as the follow up desk. Today strip, call queue cards, the 7 touch call flow, then the call guide per lead type. */
+:root{
+  --paper:#FFF0F3; --card:#FFFFFF; --ink:#590D22; --muted:#8A5A68; --line:#FFCCD5; --soft:#FFF6F8;
+  --go:#C9184A; --go-bg:#FFE1E8; --hold:#A8690B; --hold-bg:#FBF0DC; --won:#12705A; --won-bg:#DFF2EC; --stop:#6B4A55; --stop-bg:#F1E6EA;
+  --vr:#C9184A; --pm:#12705A; --hoa:#7A3E9D; --cw:#A8690B; --ob:#3D4E61;
+  --radius:10px; --font:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; --serif:Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1A0A10; --card:#261219; --ink:#FFE1E8; --muted:#D6A3B1; --line:#4A2230; --soft:#2E1620;
+  --go:#FF758F; --go-bg:#3D1522; --hold:#E3AE57; --hold-bg:#33280F; --won:#5FCBA5; --won-bg:#12302A; --stop:#C9A9B4; --stop-bg:#33202A;
+  --vr:#FF8FA3; --pm:#5FCBA5; --hoa:#C69AE6; --cw:#E3AE57; --ob:#A9B9CA; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1A0A10; --card:#261219; --ink:#FFE1E8; --muted:#D6A3B1; --line:#4A2230; --soft:#2E1620;
+  --go:#FF758F; --go-bg:#3D1522; --hold:#E3AE57; --hold-bg:#33280F; --won:#5FCBA5; --won-bg:#12302A; --stop:#C9A9B4; --stop-bg:#33202A;
+  --vr:#FF8FA3; --pm:#5FCBA5; --hoa:#C69AE6; --cw:#E3AE57; --ob:#A9B9CA; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 60px}
+.wrap{max-width:920px;margin:0 auto}
+h1{font-family:var(--serif);font-size:30px;margin:0;font-weight:700;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:21px;margin:0;font-weight:700}
+h3{font-size:15.5px;margin:0;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+header{padding-block:22px 12px;display:grid;gap:8px}
+.logo{width:150px;height:auto;display:block;background:#FFFFFF;border-radius:10px;padding:8px 10px}
+header .rule{height:4px;width:56px;background:var(--go);border-radius:2px}
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);display:flex;gap:6px;padding-block:10px;border-bottom:1px solid var(--line);overflow-x:auto}
+nav.bar a{flex:none;text-decoration:none;color:var(--go);font-weight:600;font-size:13.5px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+section{padding-block:22px 4px;display:grid;gap:12px;scroll-margin-top:58px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:grid;gap:10px;min-width:0}
+.panel.alert{border-color:var(--hold);background:var(--hold-bg)}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;min-width:118px;flex:1 1 118px}
+.stat b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);padding:6px 11px;font-size:13.5px;font-weight:600}
+button:hover{border-color:var(--muted)}
+button.go{background:var(--go);border-color:var(--go);color:var(--card)}
+button.won{background:var(--won);border-color:var(--won);color:var(--card)}
+button.stopb{color:var(--stop);border-color:var(--stop)}
+.chip{border-radius:999px;font-size:13px;padding:5px 11px}
+.chip[aria-pressed="true"]{background:var(--go);color:var(--card);border-color:var(--go)}
+select,input[type=text],input[type=date],input[type=search],input[type=email],input[type=tel],textarea{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:7px 10px;font-size:14px;min-width:0}
+textarea{width:100%;min-height:56px;resize:vertical}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--go);outline-offset:2px}
+.cards{display:grid;gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:grid;gap:9px;min-width:0}
+.card.due{border-color:var(--hold);border-width:1.5px}
+.card .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.card h3{overflow-wrap:anywhere}
+.meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.pill{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid currentColor}
+.t-vr{color:var(--vr)} .t-pm{color:var(--pm)} .t-hoa{color:var(--hoa)} .t-cw{color:var(--cw)} .t-ob{color:var(--ob)}
+.st-due{color:var(--hold);background:var(--hold-bg);border-color:transparent}
+.st-won{color:var(--won);background:var(--won-bg);border-color:transparent}
+.st-lost{color:var(--stop);background:var(--stop-bg);border-color:transparent}
+.st-talk{color:var(--go);background:var(--go-bg);border-color:transparent}
+.todo{background:var(--soft);border-radius:8px;padding:9px 11px;font-size:14px;display:grid;gap:3px}
+.todo b{font-weight:700}
+.kv{display:flex;gap:8px;align-items:center;min-width:0;font-size:14px}
+.kv .k{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);width:56px;flex:none}
+.kv .v{overflow-wrap:anywhere;min-width:0;user-select:all}
+.flag{font-size:13px;color:var(--hold);background:var(--hold-bg);border-radius:6px;padding:4px 8px}
+details summary{cursor:pointer;font-size:13px;color:var(--muted);font-weight:600}
+.hist{font-size:13px;color:var(--muted);display:grid;gap:2px;margin-top:6px}
+.flow{display:grid;gap:0}
+.fstep{display:grid;grid-template-columns:64px 1fr;gap:12px;padding-block:10px;border-top:1px solid var(--line)}
+.fstep:first-child{border-top:none}
+.fday{font-weight:700;font-size:13px;color:var(--go);font-variant-numeric:tabular-nums}
+.fday span{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.besttbl{width:100%;border-collapse:collapse;font-size:14px}
+.besttbl td,.besttbl th{text-align:left;padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}
+.besttbl th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-top:none}
+.tablewrap{overflow-x:auto}
+.say{background:var(--soft);border-left:3px solid var(--go);border-radius:0;padding:10px 12px;white-space:pre-line;font-size:15px;line-height:1.55}
+.say em{font-style:normal;font-weight:700;color:var(--go)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;border-radius:999px;padding:3px 10px;width:max-content;max-width:100%}
+.tag svg{width:14px;height:14px;flex:none}
+.tag-say{background:var(--go);color:var(--card)}
+.tag-note{background:transparent;color:var(--muted);border:1.5px dashed var(--muted)}
+.tag-write{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.speak{display:grid;gap:6px}
+.speak .say{font-size:16px}
+.note{border:1.5px dashed var(--line);border-radius:8px;padding:8px 11px;font-size:13.5px;color:var(--muted);display:grid;gap:5px;white-space:pre-line}
+.note b{color:var(--ink)}
+.say.write{border-left-color:var(--muted);background:transparent;border:1px solid var(--line);border-left:3px solid var(--muted);font-size:14.5px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sendpanel{position:fixed;inset:0;z-index:40;background:var(--paper);overflow-y:auto;padding:env(safe-area-inset-top,0px) 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.dial a.small{color:var(--go);font-weight:600}
+.dial{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+a.dialbtn{display:inline-flex;align-items:center;gap:8px;background:var(--won);color:var(--card);text-decoration:none;font-weight:800;font-size:16px;padding:11px 16px;border-radius:10px}
+a.dialbtn svg{width:18px;height:18px}
+.field{display:grid;gap:4px}
+.field textarea{min-height:190px;font-family:var(--font);line-height:1.5}
+.field textarea.short{min-height:96px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.status{font-size:14px;border-radius:8px;padding:8px 11px;background:var(--soft)}
+.status.bad{background:var(--stop-bg);color:var(--stop)}
+.status.ok{background:var(--won-bg);color:var(--won)}
+a.btnlink{display:inline-flex;align-items:center;border-radius:8px;border:1px solid var(--line);background:var(--card);padding:6px 11px;font-size:13.5px;font-weight:600;color:var(--go);text-decoration:none}
+.block{display:grid;gap:7px}
+.block .bh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.label{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+ul.q,ol.q{margin:0;padding-left:20px;display:grid;gap:5px}
+.obj{display:grid;gap:8px}
+.obj div{display:grid;gap:3px;border-top:1px solid var(--line);padding-top:8px}
+.obj b{font-weight:700}
+.callpanel{position:fixed;inset:0;z-index:30;background:var(--paper);overflow-y:auto;padding:env(safe-area-inset-top,0px) 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.callinner{max-width:720px;margin:0 auto;display:grid;gap:12px;padding-block:14px}
+.callhead{display:flex;justify-content:space-between;gap:10px;align-items:center;position:sticky;top:0;background:var(--paper);padding-block:8px;z-index:2;border-bottom:1px solid var(--line)}
+.bigbtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.bigbtns button{padding:14px 12px;font-size:15px;text-align:left;line-height:1.3}
+.progress{display:flex;gap:4px}.progress span{flex:1;height:5px;border-radius:3px;background:var(--line)}.progress span.on{background:var(--go)}
+button.callbtn{font-size:15px;padding:9px 16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--go);color:var(--card);padding:9px 14px;border-radius:8px;font-size:14px;z-index:20}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <img class="logo" alt="Radiance Restore Cleaners" src="data:image/png;base64,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">
+  <h1>Partner call desk</h1>
+  <div class="rule" aria-hidden="true"></div>
+  <p class="muted">Airbnb managers, property managers, condo and HOA managers, coworking spaces and office buildings, Jupiter to Coral Springs. Tap Start call on a lead, dial, and tap through what happens. The right script comes up at every step, and the call is logged when you finish. Calls ring through Quo. Emails open in Gmail with the right guide link already in them, and texts are ready to paste into Quo.</p>
+</header>
+<nav class="bar" aria-label="Sections"><a href="#howto">How to use</a><a href="#today">Today</a><a href="#queue">Call queue</a><a href="#flow">Call flow</a><a href="#guide">Call guide</a><a href="#add">Add a lead</a></nav>
+
+<section id="howto" aria-labelledby="howto-h">
+  <h2 id="howto-h">How to use the desk</h2>
+  <div class="panel">
+    <h3>Before your first call (one time)</h3>
+    <ol class="q">
+      <li>Open the desk link Jackson sent you and bookmark it on your phone and computer. Your calls save for the whole team as soon as you log them.</li>
+      <li>Type your first name in <b>Your name in the scripts</b>. It fills in every script for you.</li>
+      <li>Install the Quo app on your computer or phone, sign in to the business line 561.556.5899, and set Quo as your default calling app. Then the green <b>Call in Quo</b> button rings out from the business line.</li>
+      <li>Sign in to the business Gmail in the browser you use for the desk, so <b>Open in Gmail</b> opens the email from the business account.</li>
+      <li>Keep 2 or 3 before and after photos where you can attach them to Email 3.</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>What you say out loud, and what you don't</h3>
+    <div class="legend"><span class="tag tag-say"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg> Say out loud</span><span class="small">Words you speak to them, in your own voice.</span></div>
+    <div class="legend"><span class="tag tag-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-3 4.1M6.6 6.6A13 13 0 0 0 2 12c1 2.5 5 7 10 7a10 10 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg> For you only</span><span class="small">Instructions and reminders. Never read these out loud.</span></div>
+    <div class="legend"><span class="tag tag-write"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> Send in writing</span><span class="small">Emails and texts. You send these, you don't read them on the call.</span></div>
+    <p class="small muted">Words in <b style="color:var(--go)">bold pink</b> inside a script fill in for you: your name, their company, their name. If you see [name], you don't know their name yet, so just skip it.</p>
+  </div>
+  <div class="panel">
+    <h3>Every day</h3>
+    <ol class="q">
+      <li>Go to <b>Call queue</b> and pick <b>Due today</b>. Work from the top down.</li>
+      <li>On each lead, read the yellow note and the <b>Ask for</b> line first. Check the best time to call that type under <b>Call flow</b>.</li>
+      <li>Tap <b>Start call</b>, then tap the green <b>Call in Quo</b> button. Quo dials from the business line. If Quo doesn't open, tap <b>Copy number</b> and paste it into Quo.</li>
+      <li>Tap who picked up, then follow the screens. Read only the <b>Say out loud</b> boxes to them, in your own voice. The <b>For you only</b> boxes are just for you. Tap the button that matches what they say.</li>
+      <li>If they push back, tap <b>They raised an objection</b>, pick what they said, read the answer, then tap <b>Back to where I was</b>.</li>
+      <li>Type anything worth remembering in <b>Call notes</b>: names, emails, sizes, what you promised.</li>
+      <li>End with the button that matches how the call ended. That saves the call and schedules the next touch on the right day.</li>
+      <li>If the touch says <b>Send Email</b>, or anyone asks for pricing, tap <b>Email the guide</b> on the lead. The link to the right guide for that type of company is already in the email. Tap <b>Open in Gmail</b>, check it, press Send, then tap <b>I sent it</b>.</li>
+      <li>Need to text them instead? The same screen has a text with the guide link. Tap <b>Copy text</b>, paste it into Quo, and send it from 561.556.5899. Only text a number they publish for texts or gave you.</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>End of the day</h3>
+    <ol class="q">
+      <li><b>Due today</b> should be empty. Anything left rolls to tomorrow at the top of the list.</li>
+      <li>Check <b>Talking</b> for callbacks you set for tomorrow.</li>
+      <li>Text Jackson every <b>Booked</b> with the date, address and contact so it goes into Jobber.</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>Quick answers</h3>
+    <ul class="q small">
+      <li><b>Logged the wrong button?</b> Write the correction in Notes, then use the buttons on the card to put it right, or tap <b>Reopen today</b> on a closed lead.</li>
+      <li><b>Met a new business?</b> Use <b>Add a lead</b> at the bottom. It starts at touch 1 today.</li>
+      <li><b>Someone says never call again?</b> Tap <b>Do not contact</b>. We never reach out to them again.</li>
+      <li><b>Calling hours:</b> weekdays 9 AM to 5 PM. Airbnb managers are also fine Sunday afternoon.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="today" aria-labelledby="today-h">
+  <h2 id="today-h">Today</h2>
+  <div class="panel alert" id="dbNote" hidden></div>
+  <div class="stats" id="stats"></div>
+  <div class="row small">
+    <label for="me" class="muted">Your name in the scripts</label>
+    <input id="me" type="text" placeholder="Your first name" style="max-width:180px">
+  </div>
+</section>
+
+<section id="queue" aria-labelledby="queue-h">
+  <h2 id="queue-h">Call queue</h2>
+  <div class="row" role="group" aria-label="Show">
+    <button class="chip" data-v="due" aria-pressed="true">Due today</button>
+    <button class="chip" data-v="upcoming" aria-pressed="false">Upcoming</button>
+    <button class="chip" data-v="talk" aria-pressed="false">Talking</button>
+    <button class="chip" data-v="won" aria-pressed="false">Booked</button>
+    <button class="chip" data-v="closed" aria-pressed="false">Closed</button>
+    <button class="chip" data-v="all" aria-pressed="false">All</button>
+  </div>
+  <div class="row">
+    <select id="ftype" aria-label="Lead type"><option value="all">All lead types</option><option value="vr">Airbnb managers</option><option value="pm">Property managers</option><option value="hoa">Condo and HOA managers</option><option value="cw">Coworking spaces</option><option value="ob">Office buildings</option></select>
+    <select id="farea" aria-label="Area"><option value="all">All areas</option><option>South Palm Beach</option><option>North Palm Beach</option><option>North Broward</option><option>Treasure Coast</option></select>
+    <input id="fq" type="search" placeholder="Search company or city" aria-label="Search" style="flex:1 1 180px">
+  </div>
+  <p class="small muted" id="qcount"></p>
+  <div class="cards" id="cards"><div class="panel"><p class="muted">Loading your leads...</p></div></div>
+</section>
+
+<section id="flow" aria-labelledby="flow-h">
+  <h2 id="flow-h">Call flow: 7 touches over 3 weeks</h2>
+  <div class="panel">
+    <p class="small muted">Every lead runs the same 7 touches. Log each touch and the desk schedules the next one. The moment someone talks to you, they leave the flow and you follow up on the day you agreed. After touch 7 with no answer, the lead rests for 60 days and comes back for a season check in.</p>
+    <div class="flow" id="flowSteps"></div>
+  </div>
+  <div class="panel">
+    <h3>Best time to reach each type</h3>
+    <div class="tablewrap"><table class="besttbl"><thead><tr><th>Lead type</th><th>Call when</th><th>Ask for</th><th>Goal of the call</th></tr></thead><tbody id="bestBody"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <h3>Rules</h3>
+    <ul class="q small">
+      <li>Log every touch the same day, even no answers. That is what keeps the flow on schedule.</li>
+      <li>Never more than one call a day to the same company, and never more than 7 touches in a row.</li>
+      <li>Not interested means closed. Take me off your list means Do not contact, and we never reach out again.</li>
+      <li>Text only a number the company publishes for texting, or one a person gave you on a call.</li>
+      <li>Every yes becomes a booked walkthrough, a trial clean, or a date on the schedule. Write it in the notes.</li>
+      <li>Send the service guide for their type of company with Email 2, or as soon as anyone asks for pricing. Tap <b>Send the guide</b> on the lead.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="guide" aria-labelledby="guide-h">
+  <h2 id="guide-h">Call guide</h2>
+  <div class="row" role="group" aria-label="Lead type" id="gtypes"></div>
+  <p class="small muted" id="gctx"></p>
+  <div class="cards" id="gbody"></div>
+</section>
+
+<section id="add" aria-labelledby="add-h">
+  <h2 id="add-h">Add a lead</h2>
+  <form class="panel" id="addForm">
+    <p class="small muted">Met someone on a walk in or got a referral? Add them here and they start at touch 1 today.</p>
+    <div class="row">
+      <input id="aCompany" type="text" placeholder="Company name" aria-label="Company name" required style="flex:2 1 220px">
+      <select id="aType" aria-label="Lead type"><option value="vr">Airbnb manager</option><option value="pm">Property manager</option><option value="hoa">Condo or HOA manager</option><option value="cw">Coworking space</option><option value="ob">Office building</option></select>
+    </div>
+    <div class="row">
+      <input id="aCity" type="text" placeholder="City" aria-label="City" style="flex:1 1 140px">
+      <input id="aPhone" type="tel" placeholder="561.555.0100" aria-label="Phone" style="flex:1 1 140px">
+      <input id="aEmail" type="email" placeholder="office@company.com" aria-label="Email" style="flex:1 1 180px">
+      <input id="aContact" type="text" placeholder="Contact name and title" aria-label="Contact" style="flex:1 1 180px">
+    </div>
+    <p class="small" id="addMsg" aria-live="polite"></p>
+    <p class="small muted">Have a lead list file? <button type="button" data-import>Load a lead list file</button> Leads already in the desk are skipped.</p>
+    <div class="row"><button class="go" type="submit">Add to today's queue</button></div>
+  </form>
+</section>
+</div>
+
+<div id="callPanel" class="callpanel" role="dialog" aria-label="Live call" hidden></div>
+<div id="sendPanel" class="sendpanel" role="dialog" aria-label="Send the guide" hidden></div>
+<script>
+const PHONE="561.556.5899", SITE="radiancerestore.org";
+const TYPES={
+ vr:{name:"Airbnb managers",lc:"Airbnb managers",one:"Airbnb manager",best:"Weekdays 1 to 4 PM, or Sunday afternoon once checkouts are done",ask:"Owner, operations manager or turnover coordinator",goal:"Book one trial turnover"},
+ pm:{name:"Property managers",lc:"property managers",one:"Property manager",best:"Tuesday to Thursday, 9:30 to 11:30 AM",ask:"Property manager, leasing or maintenance coordinator",goal:"Get their next vacant unit"},
+ hoa:{name:"Condo and HOA managers",lc:"condo and HOA managers",one:"Condo or HOA manager",best:"Tuesday to Thursday, 10 to 11:30 AM or 2 to 4 PM",ask:"Community association manager or on site manager",goal:"Vendor list, owner newsletter, then a walkthrough"},
+ cw:{name:"Coworking spaces",lc:"coworking spaces",one:"Coworking space",best:"Weekdays 10 AM to noon",ask:"Community manager, general manager or owner",goal:"Book a free walkthrough"},
+ ob:{name:"Office buildings",lc:"office buildings",one:"Office building",best:"Weekdays 9 to 11 AM",ask:"Property manager or facilities manager",goal:"Book a free walkthrough"}
+};
+const STEPS=[
+ {day:1,kind:"call",title:"Call, then leave voicemail 1",also:"If they have an email, send Email 1 right after the call.",vm:"vm1",email:"email1"},
+ {day:3,kind:"call",title:"Call at a different time of day",also:"No voicemail this time. If you reach the front desk, ask for the decision maker by title."},
+ {day:5,kind:"email",title:"Send Email 2 with the service guide",also:"Tap Email the guide. The link to the guide for their type of company is already in the email. No email on file? Call and ask for the best email.",email:"email2"},
+ {day:8,kind:"call",title:"Call, then leave voicemail 2",also:"Mention the email you sent.",vm:"vm2"},
+ {day:11,kind:"email",title:"Send Email 3 with before and after photos",also:"Two or three of your best photos. No email? Call instead.",email:"email3"},
+ {day:15,kind:"call",title:"Last call, leave voicemail 3",also:"Short and friendly. No pressure.",vm:"vm3"},
+ {day:22,kind:"email",title:"Close the loop email",also:"No email? Leave voicemail 3 one more time. Then the lead rests for 60 days.",email:"breakup"}
+];
+const COMMON_OBJ=[
+ ["\"Now's not a good time.\"","No problem at all. Is a morning or afternoon better this week? I'll keep it to two minutes."],
+ ["\"Are you insured?\"","Yes, general liability and workers comp. I can email the certificate today."],
+ ["\"Just send me something.\"","Happy to. What's the best email? And so I send the right numbers, {sendq}"],
+ ["\"You're too expensive.\"","What are you paying now? Our price includes {incl}, so nobody has to drive out and check. Try {trial} and compare."]
+];
+const G={
+vr:{
+ vendor:"cleaning crews for your rentals",
+ dm:"Hi <em>{contact}</em>, this is <em>{me}</em> with Radiance Restore Cleaners. We're a local, insured team doing Airbnb turnovers from Jupiter to Coral Springs.\n\nI'm not calling to replace anyone. Most managers tell me the hardest part is a cleaner who doesn't show on a same day checkout. Does that ever happen to you?",
+ q:["How many properties do you manage, and in which areas?","Who cleans them now, your own team or a company?","About what do you pay per turnover?","How many same day turnovers do you get in a week?","Do you supply the linens, or does the cleaner handle laundry?","What does a perfect turnover look like to you?"],
+ pitch:"Here's how we work. We follow your photo standard, restock from your supplies, report damage or missing items right away, and send you a photo set when we finish. You get one person who answers the phone and schedules everything.",
+ price:"Partner turnovers, for 4 or more a month:\nUp to 1,000 sq ft: $140\n1,001 to 1,500 sq ft: $170\n1,501 to 2,000 sq ft: $215\n2,001 to 2,500 sq ft: $260\nSingle turnovers start at $195. Bigger homes are on the price sheet.",
+ offer:"Easy way to try us: give us one turnover at 20% off. If we're not better than what you have, you've lost nothing.",
+ close:"What's the next checkout you have coming up? Let's put that one on our schedule. What's the best email for the confirmation?",
+ sendq:"which property should I price for you, and about how big is it?",incl:"restocking and a photo report after every clean",trial:"one turnover at 20% off",
+ obj:[["\"We already have cleaners.\"","That's great, most of our partners do. Keep us as your backup for weekends, holidays and same day flips when your team is booked. You only call us when you need us."],
+      ["\"Can you do same day turnovers?\"","Yes. Send me the checkout and checkin times and we schedule inside that window."],
+      ["\"Do you do laundry?\"","If there's a washer and dryer on site, we run it during the clean. Off site linen service we quote per property."],
+      ["\"What if something's broken or missing?\"","We take photos when we walk in and text you right away, so you can file with the platform the same day."]],
+ vm1:"Hi, this is <em>{me}</em> with Radiance Restore Cleaners. We do Airbnb turnovers from Jupiter to Coral Springs, and I'd love to be your backup crew for busy weekends. Your first turnover with us is 20% off. Call or text 561.556.5899. Again, 561.556.5899. Thanks!",
+ vm2:"Hi, it's <em>{me}</em> again with Radiance Restore Cleaners. I emailed over our turnover pricing. If you ever get stuck on a same day flip, we can help. 561.556.5899.",
+ vm3:"Hi, <em>{me}</em> with Radiance Restore Cleaners, last call from me. If you need a turnover crew this season, call or text 561.556.5899. Thanks!",
+ email1:"Subject: Backup turnover crew for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nI just left you a quick voicemail. Radiance Restore Cleaners is a local, insured team doing Airbnb and vacation rental turnovers from Jupiter to Coral Springs.\n\nWe follow your photo standard, restock from your supplies, report damage right away, and send a photo set after every clean.\n\nYour first turnover is 20% off. What's your next checkout?\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners\n561.556.5899 · radiancerestore.org",
+ email2:"Subject: Turnover pricing for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nHere's our partner pricing for managers who book 4 or more turnovers a month:\n\nUp to 1,000 sq ft: $140\n1,001 to 1,500 sq ft: $170\n1,501 to 2,000 sq ft: $215\n2,001 to 2,500 sq ft: $260\n\nOur service guide, linked below, has our full checklist and larger homes. Your first turnover is 20% off.\n\nReply with an address and checkout time and we'll take it from there.\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ email3:"Subject: What a Radiance turnover looks like\n\nHi <em>{contact}</em>,\n\nA few before and after photos from a recent turnover are attached. This is the photo set you'd get after every clean.\n\nIf a cleaner ever cancels on you last minute, call or text 561.556.5899 and we'll see what we can do the same day.\n\n<em>{me}</em>\nRadiance Restore Cleaners",
+ breakup:"Subject: Should I close your file?\n\nHi <em>{contact}</em>,\n\nI've reached out a few times and don't want to fill your inbox. I'll close your file for now.\n\nIf you ever need a backup turnover crew, our first clean is still 20% off. Just reply here or text 561.556.5899.\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners",
+ text:"Hi <em>{contact}</em>, it's <em>{me}</em> with Radiance Restore Cleaners. We do Airbnb turnovers from Jupiter to Coral Springs. Need a backup crew for your next checkout? First turnover is 20% off. 561.556.5899"
+},
+pm:{
+ vendor:"cleaning for move outs and vacant units",
+ dm:"Hi <em>{contact}</em>, this is <em>{me}</em> with Radiance Restore Cleaners. We're a local, insured cleaning company, and we do move out and rent ready cleans from Jupiter to Coral Springs.\n\nWhen a tenant moves out, how long does it usually take you to get the unit cleaned and ready to show?",
+ q:["About how many units do you manage, and where?","How many move outs do you have in a typical month?","Who cleans them now, your maintenance team or a company?","What's the biggest problem with your current cleaner: speed, quality, or showing up?","Do you ever need cleans for occupied homes you manage, like before an inspection?"],
+ pitch:"We clean empty units top to bottom: inside every cabinet, the oven and fridge, baseboards, blinds, vents and closets. We work around your painters and maintenance, we're usually in within 48 hours, and you get photos when it's ready to show.",
+ price:"Move out or move in, empty unit:\nUp to 1,000 sq ft: $315\n1,001 to 1,500 sq ft: $375\n1,501 to 2,000 sq ft: $500\n2,001 to 2,500 sq ft: $625\nDeep cleans for occupied homes start at $275.",
+ offer:"Send us your next vacant unit. Your first move out is 20% off.",
+ close:"Do you have a unit coming vacant this month? Give me the address and the day it's empty, and I'll get it on the schedule. What's the best email for the confirmation?",
+ sendq:"about how big are most of your units?",incl:"inside cabinets and appliances plus a photo report",trial:"your next move out at 20% off",
+ obj:[["\"Our maintenance guy cleans them.\"","That works until he's behind on repairs. We're the extra hands for turnover weeks, so he can stay on the fixes and your units still list on time."],
+      ["\"How fast can you get in?\"","Usually within 48 hours. Tell me the day it's empty and when the painters are done, and we'll fit around them."],
+      ["\"Do you do post renovation cleans?\"","Yes. Construction dust is quoted after a few photos or a quick walkthrough, so the price is right before we start."],
+      ["\"We have a vendor we like.\"","Great. Keep us as your backup for busy months. Most managers like having a second name when the first one is booked."]],
+ vm1:"Hi, this is <em>{me}</em> with Radiance Restore Cleaners. We do move out and rent ready cleans from Jupiter to Coral Springs, usually within 48 hours, with photos when it's ready to show. Your first move out is 20% off. Call or text 561.556.5899. Again, 561.556.5899. Thanks!",
+ vm2:"Hi, it's <em>{me}</em> again with Radiance Restore Cleaners. I emailed our move out pricing. If you have a unit coming vacant, we'd love to clean it. 561.556.5899.",
+ vm3:"Hi, <em>{me}</em> with Radiance Restore Cleaners, last call from me. If you need a move out crew this season, call or text 561.556.5899. Thanks!",
+ email1:"Subject: Move out cleans for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nI just left you a quick voicemail. Radiance Restore Cleaners is a local, insured company doing move out and rent ready cleans from Jupiter to Coral Springs.\n\nWe clean inside every cabinet and appliance, baseboards, blinds and closets, and we're usually in within 48 hours. You get photos when the unit is ready to show.\n\nYour first move out is 20% off. Do you have a unit coming vacant?\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners\n561.556.5899 · radiancerestore.org",
+ email2:"Subject: Move out pricing for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nHere's our move out pricing for empty units:\n\nUp to 1,000 sq ft: $315\n1,001 to 1,500 sq ft: $375\n1,501 to 2,000 sq ft: $500\n2,001 to 2,500 sq ft: $625\n\nOur service guide, linked below, has the full checklist and larger homes. Your first move out is 20% off.\n\nReply with the address and the day it's empty and we'll schedule it.\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ email3:"Subject: A recent move out, before and after\n\nHi <em>{contact}</em>,\n\nAttached are a few before and after photos from a recent move out. Kitchens and bathrooms are where we spend the most time, since that's what renters notice first.\n\nWhenever you have a vacant unit, call or text 561.556.5899.\n\n<em>{me}</em>\nRadiance Restore Cleaners",
+ breakup:"Subject: Should I close your file?\n\nHi <em>{contact}</em>,\n\nI've reached out a few times and don't want to fill your inbox. I'll close your file for now.\n\nIf you ever need a move out crew, your first clean is still 20% off. Just reply here or text 561.556.5899.\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners",
+ text:"Hi <em>{contact}</em>, it's <em>{me}</em> with Radiance Restore Cleaners. We do move out and rent ready cleans, usually within 48 hours. First move out is 20% off. 561.556.5899"
+},
+hoa:{
+ vendor:"vendors for your buildings and owners",
+ dm:"Hi <em>{contact}</em>, this is <em>{me}</em> with Radiance Restore Cleaners. We're a local, insured cleaning company.\n\nYour seasonal owners are coming back over the next few weeks, and a lot of them walk into a unit that's been closed up since spring. We do welcome home opening cleans, and owners who book through you get 10% off. Do your owners ever ask you who to call for cleaning?",
+ q:["How many associations or buildings do you manage?","Do you keep a vendor list or send an owner newsletter?","Who cleans your common areas now: lobby, fitness room, pool restrooms?","Do you get move out or sale cleans when units change hands?","How does your board choose vendors, and when do contracts come up?"],
+ pitch:"We help two ways. For owners: welcome home cleans when they arrive, closing cleans when they leave, and move out cleans when a unit sells. For the building: lobby, elevators, hallways, fitness room and pool restrooms on the nights you choose. You get one contact and photos after every clean.",
+ price:"Owner units:\nWelcome home opening clean: $275 up to 1,000 sq ft, $330 for 1,001 to 1,500\nClosing clean: $160 up to 1,000 sq ft, $190 for 1,001 to 1,500\nMove out or sale clean: from $315\nCommon areas: $65 per cleaner hour, 2 hour minimum.",
+ offer:"Two easy starts: add us to your vendor list and owner newsletter with the 10% off, and let us walk the common areas for a free quote.",
+ close:"Could I send you a short flyer for your next owner email? And when's a good time this week for a 15 minute walkthrough of the common areas?",
+ sendq:"is it for owner units, common areas, or both?",incl:"a photo report after every clean",trial:"a free common area walkthrough",
+ obj:[["\"Our board picks vendors.\"","Totally fair. Could you put our quote in front of the board at the next meeting? I'll send the certificate of insurance and a one page summary so it's easy."],
+      ["\"We already have janitorial.\"","That's great. Owner unit cleans are separate from your janitorial contract, so the vendor list and newsletter don't change anything for you. And if the contract ever comes up for bid, I'd love to quote it."],
+      ["\"Can owners pay you directly?\"","Yes. Owners book and pay us directly. You just share our name, and it's one less request on your desk."],
+      ["\"We don't allow solicitation.\"","Understood. We'd only be listed as a vendor option. We never contact residents unless they reach out to us."]],
+ vm1:"Hi, this is <em>{me}</em> with Radiance Restore Cleaners. Your seasonal owners are coming back, and we do welcome home opening cleans with 10% off for owners who book through you. We also clean common areas. Call or text 561.556.5899. Again, 561.556.5899. Thanks!",
+ vm2:"Hi, it's <em>{me}</em> again with Radiance Restore Cleaners. I emailed a short flyer for your owners and our common area pricing. 561.556.5899.",
+ vm3:"Hi, <em>{me}</em> with Radiance Restore Cleaners, last call from me. If your owners need a cleaner this season, call or text 561.556.5899. Thanks!",
+ email1:"Subject: Welcome home cleans for <em>{company}</em> owners\n\nHi <em>{contact}</em>,\n\nI just left you a quick voicemail. Radiance Restore Cleaners is a local, insured cleaning company from Jupiter to Coral Springs.\n\nAs seasonal owners return, we offer welcome home opening cleans, and owners who book through you get 10% off their first clean. We also clean lobbies, fitness rooms and pool restrooms on the nights you choose.\n\nCould we be on your vendor list or in your next owner email?\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners\n561.556.5899 · radiancerestore.org",
+ email2:"Subject: Owner and common area pricing for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nHere's our pricing:\n\nWelcome home opening clean: $275 up to 1,000 sq ft, $330 for 1,001 to 1,500\nClosing clean: $160 up to 1,000 sq ft, $190 for 1,001 to 1,500\nMove out or sale clean: from $315\nCommon areas: $65 per cleaner hour, 2 hour minimum\n\nOur service guide, linked below, has the full checklists. Owners who book through you get 10% off.\n\nWhen's a good time for a free 15 minute walkthrough of your common areas?\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ email3:"Subject: A flyer you can send your owners\n\nHi <em>{contact}</em>,\n\nAttached are a few before and after photos and a short note you can paste into your next owner email. It includes the 10% off for your owners.\n\nIf it helps, I'm happy to send our certificate of insurance for your vendor file.\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ breakup:"Subject: Should I close your file?\n\nHi <em>{contact}</em>,\n\nI've reached out a few times and don't want to fill your inbox. I'll close your file for now.\n\nIf your owners ever need a cleaner, or your common area contract comes up for bid, just reply here or call 561.556.5899.\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners",
+ text:"Hi <em>{contact}</em>, it's <em>{me}</em> with Radiance Restore Cleaners. We do welcome home cleans for seasonal owners, 10% off when they book through you. Could we be on your vendor list? 561.556.5899"
+},
+cw:{
+ vendor:"cleaning for the space",
+ dm:"Hi <em>{contact}</em>, this is <em>{me}</em> with Radiance Restore Cleaners. We're a local, insured cleaning company.\n\nWe clean coworking spaces after close: offices, kitchen, restrooms and conference rooms, so members walk into a fresh space every morning and we never get in the way of a call or a tour. Who handles cleaning for <em>{company}</em> right now?",
+ q:["About how many square feet is the space, and how many floors?","How many nights a week is it cleaned now?","What do members complain about most: kitchen, restrooms, trash?","Who supplies paper products and trash liners?","Is your current cleaner on a contract, and when does it renew?"],
+ pitch:"Every visit we reset reception, wipe clear desks without moving papers, clean the kitchen and coffee bar, disinfect restrooms, and vacuum and mop. Weekly we clean out the fridge and the glass, and monthly we do baseboards and vents. One contact, and nothing changes in your members' day.",
+ price:"Per visit, after hours:\nUp to 2,500 sq ft: $95\n2,501 to 5,000 sq ft: $125\n5,001 to 7,500 sq ft: $190\n7,501 to 10,000 sq ft: $250\nMonthly price is per visit times visits. Example: 2,501 to 5,000 sq ft, 5 nights a week, is about $2,710 a month.",
+ offer:"Let us walk the space for 15 minutes and send a written quote. Your first week is 20% off.",
+ close:"What day this week works for a quick walkthrough, morning or afternoon? I'll bring the checklist so we can build it around your members.",
+ sendq:"about how many square feet is the space, and how many nights a week?",incl:"the kitchen, restrooms and weekly fridge clean out",trial:"your first week at 20% off",
+ obj:[["\"Our members are here late.\"","We start after your last member leaves, or at a time you pick. A lot of spaces like a 9 PM start."],
+      ["\"We just clean it ourselves.\"","A lot of community managers do at first. We take the nightly work off your plate so your time goes to members and tours. Want a quote just to compare?"],
+      ["\"We're under contract.\"","No problem. When does it renew? I'll send a quote 60 days before so you have something to compare."],
+      ["\"Do you do day porter?\"","Yes, $65 per cleaner hour, for events or busy days. It's on the price sheet."]],
+ vm1:"Hi, this is <em>{me}</em> with Radiance Restore Cleaners. We clean coworking spaces after hours: kitchens, restrooms, offices and conference rooms. I'd love to walk your space for a free quote, and your first week is 20% off. Call or text 561.556.5899. Again, 561.556.5899. Thanks!",
+ vm2:"Hi, it's <em>{me}</em> again with Radiance Restore Cleaners. I emailed our after hours pricing. Happy to do a free 15 minute walkthrough whenever it suits you. 561.556.5899.",
+ vm3:"Hi, <em>{me}</em> with Radiance Restore Cleaners, last call from me. If you ever want a quote for nightly cleaning, call or text 561.556.5899. Thanks!",
+ email1:"Subject: After hours cleaning for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nI just left you a quick voicemail. Radiance Restore Cleaners is a local, insured company that cleans coworking spaces after close: offices, the kitchen and coffee bar, restrooms and conference rooms.\n\nWe'd love to walk the space for 15 minutes and send a written quote. Your first week is 20% off.\n\nWhat day works for you?\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners\n561.556.5899 · radiancerestore.org",
+ email2:"Subject: Cleaning pricing for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nHere's our after hours pricing per visit:\n\nUp to 2,500 sq ft: $95\n2,501 to 5,000 sq ft: $125\n5,001 to 7,500 sq ft: $190\n7,501 to 10,000 sq ft: $250\n\nOur service guide, linked below, shows the full nightly, weekly and monthly checklist and monthly prices for 1 to 5 nights a week.\n\nA free walkthrough gets you an exact number. Your first week is 20% off.\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ email3:"Subject: What your members would walk into\n\nHi <em>{contact}</em>,\n\nAttached are a few before and after photos from a recent office clean. Kitchens and restrooms are what members notice most, so that's where we start every night.\n\nIf you'd like a quote to compare, just reply with a good day for a walkthrough.\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ breakup:"Subject: Should I close your file?\n\nHi <em>{contact}</em>,\n\nI've reached out a few times and don't want to fill your inbox. I'll close your file for now.\n\nIf your cleaning contract comes up or you want a quote to compare, just reply here or call 561.556.5899.\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners",
+ text:"Hi <em>{contact}</em>, it's <em>{me}</em> with Radiance Restore Cleaners. We clean coworking spaces after hours. Could I do a free 15 minute walkthrough this week? First week 20% off. 561.556.5899"
+},
+ob:{
+ vendor:"janitorial for your buildings",
+ dm:"Hi <em>{contact}</em>, this is <em>{me}</em> with Radiance Restore Cleaners. We're a local, insured cleaning company.\n\nWe do after hours janitorial for office buildings: lobbies, elevators, common restrooms and tenant suites, plus turnover cleans when a tenant moves out. Who handles janitorial for your buildings right now?",
+ q:["How many buildings do you manage, and about how many square feet?","How many nights a week are common areas cleaned?","Do tenants handle their own suites, or is it in the lease?","What's the one thing tenants complain about?","Is your janitorial on a contract, and when does it renew?","Do you need tenant turnover cleans between leases?"],
+ pitch:"We clean lobbies and entries, elevators, corridors, stairwells and common restrooms on your schedule, plus tenant suites if you want them. Weekly we do interior glass, monthly baseboards and vents, and we report lighting outages and maintenance issues to you. One contact, photos, and we fix anything missed within 24 hours.",
+ price:"Per visit, after hours:\nUp to 2,500 sq ft: $95\n2,501 to 5,000 sq ft: $125\n7,501 to 10,000 sq ft: $250\n10,001 to 15,000 sq ft: $375\nBigger or multiple buildings: priced after a walkthrough. Tenant turnover cleans: $65 per cleaner hour.",
+ offer:"Let us walk one building and send a written quote. Even if you're under contract, it gives you a number to compare at renewal.",
+ close:"Which building would be easiest to walk first? Does early next week work for 20 minutes?",
+ sendq:"which building, and about how many square feet?",incl:"restroom restocking, periodic glass and baseboards, and maintenance reports",trial:"a free walkthrough and written quote",
+ obj:[["\"We're under contract.\"","No problem. When does it renew? I'll send a quote 60 days before so you have something to compare."],
+      ["\"We need a COI with additional insured.\"","Absolutely. Send me your requirements and I'll get the certificate to you."],
+      ["\"Can you handle multiple buildings?\"","Let's start with one so you can see the work, then add buildings as you're comfortable."],
+      ["\"We need tenant turnover cleans fast.\"","We can usually schedule within 48 hours. Turnovers are $65 per cleaner hour, quoted before we start."]],
+ vm1:"Hi, this is <em>{me}</em> with Radiance Restore Cleaners. We do after hours janitorial for office buildings and tenant turnover cleans. I'd love to walk one of your buildings for a free quote. Call or text 561.556.5899. Again, 561.556.5899. Thanks!",
+ vm2:"Hi, it's <em>{me}</em> again with Radiance Restore Cleaners. I emailed our janitorial pricing. Happy to walk a building whenever it suits you. 561.556.5899.",
+ vm3:"Hi, <em>{me}</em> with Radiance Restore Cleaners, last call from me. If your janitorial comes up for bid, call 561.556.5899. Thanks!",
+ email1:"Subject: Janitorial quote for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nI just left you a quick voicemail. Radiance Restore Cleaners is a local, insured company doing after hours janitorial for office buildings: lobbies, elevators, common restrooms and tenant suites, plus turnover cleans between leases.\n\nCould we walk one building for a free written quote? Even under contract, it's a number to compare at renewal.\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners\n561.556.5899 · radiancerestore.org",
+ email2:"Subject: Janitorial pricing for <em>{company}</em>\n\nHi <em>{contact}</em>,\n\nHere's our after hours pricing per visit:\n\nUp to 2,500 sq ft: $95\n2,501 to 5,000 sq ft: $125\n7,501 to 10,000 sq ft: $250\n10,001 to 15,000 sq ft: $375\n\nBigger or multiple buildings are priced after a walkthrough. Tenant turnover cleans are $65 per cleaner hour. Our service guide, linked below, has the full checklist.\n\nWhich building would be easiest to walk first?\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ email3:"Subject: Before and after from a recent office clean\n\nHi <em>{contact}</em>,\n\nAttached are a few before and after photos from a recent office clean. Restrooms and lobbies are what tenants notice first, so that's where we start.\n\nWhen your janitorial contract comes up, I'd love to quote it.\n\n<em>{me}</em>\nRadiance Restore Cleaners · 561.556.5899",
+ breakup:"Subject: Should I close your file?\n\nHi <em>{contact}</em>,\n\nI've reached out a few times and don't want to fill your inbox. I'll close your file for now.\n\nWhen your janitorial comes up for bid or you need a tenant turnover clean, just reply here or call 561.556.5899.\n\nThank you,\n<em>{me}</em>\nRadiance Restore Cleaners",
+ text:"Hi <em>{contact}</em>, it's <em>{me}</em> with Radiance Restore Cleaners. We do after hours janitorial and tenant turnover cleans. Could I walk one building for a free quote? 561.556.5899"
+}};
+
+let LEADS=[], VIEW="due", GTYPE="vr", CTX=null, db=null, canWrite=true;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const IC={say:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-3 4.1M6.6 6.6A13 13 0 0 0 2 12c1 2.5 5 7 10 7a10 10 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',write:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>'};
+function tagHtml(kind,text){return `<span class="tag tag-${kind}">${IC[kind]}${esc(text)}</span>`}
+function sayBox(html,label="Say out loud"){return `<div class="speak">${tagHtml("say",label)}<div class="say">${html}</div></div>`}
+function noteBox(html,label="For you only · don't read out loud"){return `<div class="note">${tagHtml("note",label)}<div>${html}</div></div>`}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function addDays(s,n){const [y,m,d]=s.split("-").map(Number);const t=new Date(y,m-1,d+n);return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0")}
+function nice(s){if(!s)return"";const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1800)}
+function meName(){let v="";try{v=localStorage.getItem("pcd_me")||""}catch(e){}return v}
+function fill(txt,lead){const me=$("me").value.trim()||"[your name]";
+  const contact=lead&&lead.contact&&!/^ask /i.test(lead.contact)?lead.contact.split(",")[0].split(" and ")[0].trim():"[name]";
+  return txt.replaceAll("{me}",esc(me)).replaceAll("{company}",esc(lead?lead.company:"[company]")).replaceAll("{contact}",esc(contact)).replaceAll("{city}",esc(lead?lead.city:"[city]"))}
+function plain(html){const d=document.createElement("div");d.innerHTML=html;return d.textContent}
+async function copy(btn,text){try{await navigator.clipboard.writeText(text);btn.textContent="Copied";setTimeout(()=>btn.textContent="Copy",1200)}catch(e){const r=document.createRange();r.selectNodeContents(btn.closest(".block").querySelector(".say"));const s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent="Selected"}}
+
+// ---------- Queue ----------
+function bucket(l,t){
+  if(["lost","dnc","bad"].includes(l.status))return"closed";
+  if(l.status==="won")return"won";
+  if(l.status==="talked")return l.nextDue&&l.nextDue<=t?"due":"talk";
+  return l.nextDue&&l.nextDue<=t?"due":"upcoming";
+}
+function stepInfo(l){const s=STEPS[Math.max(0,Math.min(6,(l.step||1)-1))];const noEmail=!l.email;
+  let title=s.title;if(s.kind==="email"&&noEmail)title="Call instead (no email on file), ask for the best email";
+  if(l.status==="rested")title="Season check in: start over with touch 1";
+  if(l.status==="talked")title="Follow up on your conversation";
+  return {s,title}}
+function renderStats(){const t=today();
+  const due=LEADS.filter(l=>bucket(l,t)==="due").length;
+  const touched=LEADS.filter(l=>(l.history||[]).some(h=>h.d===t)).length;
+  const talk=LEADS.filter(l=>l.status==="talked").length;
+  const won=LEADS.filter(l=>l.status==="won").length;
+  $("stats").innerHTML=[[due,"Due today"],[touched,"Touched today"],[talk,"Talking"],[won,"Booked"],[LEADS.length,"Leads in the desk"]].map(([v,k])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join("")}
+function renderQueue(){const t=today(),ft=$("ftype").value,fa=$("farea").value,q=$("fq").value.trim().toLowerCase();
+  let rows=LEADS.filter(l=>(VIEW==="all"||bucket(l,t)===VIEW)&&(ft==="all"||l.type===ft)&&(fa==="all"||l.area===fa)&&(!q||(l.company+" "+l.city).toLowerCase().includes(q)));
+  rows.sort((a,b)=>(a.nextDue||"9").localeCompare(b.nextDue||"9")||(a.priority-b.priority)||a.company.localeCompare(b.company));
+  $("qcount").textContent=rows.length+" shown";
+  if(!LEADS.length){return}
+  if(!rows.length){$("cards").innerHTML=`<div class="panel"><p class="muted">${VIEW==="due"?"Nothing due right now. Check Upcoming, or add a lead you met today.":"Nothing here yet."}</p></div>`;return}
+  $("cards").innerHTML=rows.slice(0,120).map(l=>card(l,t)).join("");
+}
+function card(l,t){const b=bucket(l,t),{s,title}=stepInfo(l);
+  const stPill=b==="due"?`<span class="pill st-due">Due ${l.nextDue<t?"since "+nice(l.nextDue):"today"}</span>`:b==="won"?`<span class="pill st-won">Booked</span>`:b==="closed"?`<span class="pill st-lost">${{lost:"Not interested",dnc:"Do not contact",bad:"Bad number"}[l.status]}</span>`:b==="talk"?`<span class="pill st-talk">Talking · ${nice(l.nextDue)}</span>`:`<span class="pill" style="color:var(--muted)">Next ${nice(l.nextDue)}</span>`;
+  const hist=(l.history||[]).slice().reverse().map(h=>`<div>${nice(h.d)} · Touch ${h.s} · ${esc(h.r)}${h.n?" · "+esc(h.n):""}</div>`).join("")||"<div>No touches yet.</div>";
+  const active=!["won","lost","dnc","bad"].includes(l.status);
+  return `<article class="card${b==="due"?" due":""}" data-id="${esc(l.id)}">
+   <div class="top"><div style="display:grid;gap:3px;min-width:0"><h3>${esc(l.company)}</h3><p class="meta">${esc(l.city)} · ${esc(l.area)}${l.address?" · "+esc(l.address):""}</p></div>
+   <div class="row"><span class="pill t-${l.type}">${TYPES[l.type].one}</span>${stPill}</div></div>
+   ${active?`<div class="todo"><span class="small muted">${l.status==="talked"||l.status==="rested"?"":"Touch "+(l.step||1)+" of 7 · Day "+s.day}</span><b>${esc(title)}</b>${l.status==="talked"?"":`<span class="small muted">${esc(s.also)}</span>`}</div>`:""}
+   <div class="kv"><span class="k">Phone</span><span class="v">${l.phone?`<a href="tel:${esc(e164(l.phone))}" >${esc(l.phone)}</a>`:""}</span></div>
+   ${l.email?`<div class="kv"><span class="k">Email</span><span class="v">${esc(l.email)}</span></div>`:""}
+   ${l.contact?`<div class="kv"><span class="k">Ask for</span><span class="v" style="user-select:auto">${esc(l.contact)}</span></div>`:""}
+   ${l.note?`<p class="small">${esc(l.note)}</p>`:""}
+   ${l.confirm?`<p class="flag">${esc(l.confirm)}</p>`:""}
+   <div class="row"><button class="go callbtn" data-a="call">Start call</button><button data-a="send">${l.email?"Email the guide":"Send the guide"}</button><button data-a="script">Open the script</button>${l.website?`<a class="small" href="${/^https?:/.test(l.website)?esc(l.website):"https://"+esc(l.website)}" target="_blank" rel="noopener">Website</a>`:""}</div>
+   ${active&&canWrite?`<div class="row">
+     <button data-a="noanswer">No answer</button><button data-a="vm">Left voicemail</button><button data-a="emailed">Sent email</button>
+     <button class="go" data-a="talked">Talked, follow up</button><button class="won" data-a="won">Booked</button>
+     <button class="stopb" data-a="lost">Not interested</button><button data-a="bad">Bad number</button><button data-a="dnc">Do not contact</button></div>
+     <div class="row" data-talkrow hidden><label class="small muted" for="fu-${esc(l.id)}">Follow up on</label><input type="date" id="fu-${esc(l.id)}" value="${addDays(t,3)}"><button class="go" data-a="savetalk">Save follow up</button></div>`:""}
+   ${!active&&canWrite?`<div class="row"><button data-a="reopen">Reopen today</button></div>`:""}
+   ${canWrite?`<div><label class="small muted" for="n-${esc(l.id)}">Notes</label><textarea id="n-${esc(l.id)}" data-notes placeholder="Who you spoke with, what they said, what you promised">${esc(l.notes||"")}</textarea></div>`:(l.notes?`<p class="small">${esc(l.notes)}</p>`:"")}
+   <details><summary>History</summary><div class="hist">${hist}</div></details>
+  </article>`}
+const inflight=new Set();
+async function save(id,patch,msg){if(!db){toast("The desk is still loading. Try again in a moment.");return}
+  if(inflight.has(id))return;inflight.add(id);
+  try{const j=await api("update",{id,patch});const i=LEADS.findIndex(x=>x.id===id);if(i>=0&&j.lead)LEADS[i]=j.lead;
+    if(CTX&&CTX.id===id)CTX=LEADS[i]||CTX;renderStats();renderQueue();if(msg)toast(msg)}
+  catch(e){if(e.code!=="bad_code")toast(e.message||"Couldn't save. Try again.")}
+  finally{inflight.delete(id)}}
+function hpush(l,r,n){const h=(l.history||[]).slice(-24);h.push({d:today(),s:l.step||1,r,...(n?{n}:{})});return h}
+function advance(l,r){const t=today(),i=(l.step||1);
+  if(l.status==="rested")return {step:2,status:"active",nextDue:addDays(t,STEPS[1].day-STEPS[0].day),history:hpush(l,r)};
+  if(i>=7)return {step:1,status:"rested",nextDue:addDays(t,60),history:hpush(l,r+", resting 60 days")};
+  return {step:i+1,status:"active",nextDue:addDays(t,STEPS[i].day-STEPS[i-1].day),history:hpush(l,r)}}
+$("cards").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;const c=b.closest(".card"),id=c.dataset.id,l=LEADS.find(x=>x.id===id);if(!l)return;const a=b.dataset.a;
+  if(a==="call"){openCall(l);return}
+  if(a==="send"){openSend(l,{});return}
+  if(a==="script"){CTX=l;GTYPE=l.type;renderGuide();$("guide").scrollIntoView({behavior:"smooth"});return}
+  if(a==="noanswer")return save(id,advance(l,"No answer"),"Logged. Next touch scheduled.");
+  if(a==="vm")return save(id,advance(l,"Left voicemail"),"Logged. Next touch scheduled.");
+  if(a==="emailed")return save(id,advance(l,"Sent email"),"Logged. Next touch scheduled.");
+  if(a==="talked"){c.querySelector("[data-talkrow]").hidden=false;return}
+  if(a==="savetalk"){const d=c.querySelector('input[type=date]').value||addDays(today(),3);return save(id,{status:"talked",nextDue:d,history:hpush(l,"Talked, follow up "+nice(d))},"Follow up saved.")}
+  if(a==="won")return save(id,{status:"won",history:hpush(l,"Booked")},"Booked. Nice work.");
+  if(a==="lost")return save(id,{status:"lost",history:hpush(l,"Not interested")},"Closed.");
+  if(a==="bad")return save(id,{status:"bad",history:hpush(l,"Bad number")},"Closed.");
+  if(a==="dnc")return save(id,{status:"dnc",history:hpush(l,"Do not contact")},"Marked do not contact.");
+  if(a==="reopen")return save(id,{status:"active",nextDue:today(),history:hpush(l,"Reopened")},"Back in today's queue.");
+});
+$("cards").addEventListener("change",e=>{const ta=e.target.closest("textarea[data-notes]");if(!ta)return;const id=ta.closest(".card").dataset.id,l=LEADS.find(x=>x.id===id);if(l&&ta.value!==(l.notes||""))save(id,{notes:ta.value},"Notes saved.")});
+document.querySelectorAll(".chip[data-v]").forEach(b=>b.addEventListener("click",()=>{VIEW=b.dataset.v;document.querySelectorAll(".chip[data-v]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));renderQueue()}));
+["ftype","farea"].forEach(id=>$(id).addEventListener("change",renderQueue));$("fq").addEventListener("input",renderQueue);
+
+// ---------- Flow ----------
+$("flowSteps").innerHTML=STEPS.map((s,i)=>`<div class="fstep"><div class="fday">Day ${s.day}<span>Touch ${i+1}</span></div><div style="display:grid;gap:2px"><b>${esc(s.title)}</b><span class="small muted">${esc(s.also)}</span></div></div>`).join("")+`<div class="fstep"><div class="fday">Day 82<span>Rest</span></div><div style="display:grid;gap:2px"><b>Season check in</b><span class="small muted">No reply after 7 touches? The lead rests 60 days, then comes back at touch 1.</span></div></div>`;
+$("bestBody").innerHTML=Object.entries(TYPES).map(([k,v])=>`<tr><td><span class="pill t-${k}">${v.one}</span></td><td>${esc(v.best)}</td><td>${esc(v.ask)}</td><td>${esc(v.goal)}</td></tr>`).join("");
+
+// ---------- Guide ----------
+$("gtypes").innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="chip" data-g="${k}" aria-pressed="${k===GTYPE}">${v.name}</button>`).join("");
+$("gtypes").addEventListener("click",e=>{const b=e.target.closest("button[data-g]");if(!b)return;GTYPE=b.dataset.g;if(CTX&&CTX.type!==GTYPE)CTX=null;renderGuide()});
+function block(label,html,copyable=true,kind="say",tagText){const t=tagText||(kind==="say"?"Say out loud":"Send in writing · don't read out loud");
+  return `<div class="block"><div class="bh"><span class="label">${label}</span>${copyable?'<button data-copy>Copy</button>':""}</div>${tagHtml(kind,t)}<div class="say${kind==="write"?" write":""}">${html}</div></div>`}
+function renderGuide(){document.querySelectorAll("#gtypes .chip").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.g===GTYPE)));
+  const g=G[GTYPE],L=CTX,T=TYPES[GTYPE];
+  $("gctx").innerHTML=L?`Filled in for <b>${esc(L.company)}</b> · ${esc(L.phone)} · touch ${L.step||1} of 7. <button data-clear style="margin-left:6px">Clear</button>`:`Pick a lead's "Open the script" to fill in their name. Best time: ${esc(T.best)}. Ask for: ${esc(T.ask)}.`;
+  const f=t=>fill(t,L);
+  const desk=deskParts(g,T).map(([k,t])=>k==="say"?sayBox(f(t)):noteBox(esc(t))).join("");
+  const objs=g.obj.concat(COMMON_OBJ.map(([q,a])=>[q,a.replace("{sendq}",g.sendq).replace("{incl}",g.incl).replace("{trial}",g.trial)]));
+  $("gbody").innerHTML=`
+   <div class="panel"><h3>1. Before you dial</h3>${tagHtml("note","For you only · don't read out loud")}<ul class="q small"><li>Open their website. Note how many properties, units or square feet they mention.</li><li>Check the yellow note on the lead card. Confirm anything flagged.</li><li>Goal of this call: <b>${esc(T.goal)}</b>.</li><li>Have the price sheet open, and smile. They can hear it.</li></ul></div>
+   <div class="panel"><span class="label">2. Front desk</span>${desk}</div>
+   <div class="panel">${block("3. Decision maker opener",f(g.dm))}</div>
+   <div class="panel"><div class="block"><span class="label">4. Questions to ask</span>${tagHtml("say","Ask out loud, one at a time")}<ol class="q say">${g.q.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>${noteBox("Listen more than you talk. Write their answers in the notes.")}</div></div>
+   <div class="panel">${block("5. How we work",f(g.pitch))}${block("Pricing",esc(g.price),true,"say","Say out loud only if they ask about price")}${block("6. The offer",f(g.offer))}${block("7. Close",f(g.close))}</div>
+   <div class="panel"><div class="block"><span class="label">8. When they push back</span>${noteBox("Find what they said, then read the answer under it.")}<div class="obj">${objs.map(([q,a])=>`<div><span class="small muted">If they say</span><b>${esc(q)}</b>${sayBox(f(esc(a)),"You say")}</div>`).join("")}</div></div></div>
+   <div class="panel">${block("Voicemail 1 · touch 1",f(g.vm1),true,"say","Say into their voicemail")}${block("Voicemail 2 · touch 4",f(g.vm2),true,"say","Say into their voicemail")}${block("Voicemail 3 · touch 6 and 7",f(g.vm3),true,"say","Say into their voicemail")}</div>
+   <div class="panel">${noteBox("Easiest way: tap <b>Email the guide</b> on the lead. It fills in the email and puts in the link to the right guide for you.")}${block("Email 1 · touch 1",f(g.email1),true,"write")}${block("Email 2 · touch 3 · goes with the service guide",f(g.email2),true,"write")}${block("Email 3 · touch 5 · attach 2 or 3 photos",f(g.email3),true,"write")}${block("Close the loop · touch 7",f(g.breakup),true,"write")}</div>
+   <div class="panel">${block("Text · only to a number they publish for texts or gave you",f(g.text),true,"write","Send as a text · don't read out loud")}</div>
+   <div class="panel"><h3>9. After the call</h3>${tagHtml("note","For you only")}<ul class="q small"><li>Tap what happened on the lead card. The desk schedules the next touch.</li><li>Talked? Pick the follow up date you agreed on, and write what you promised in the notes.</li><li>Booked a walkthrough or trial? Tap Booked, and add the date, address and contact to the notes, then put it in Jobber.</li></ul></div>`;
+}
+$("gbody").addEventListener("click",e=>{const b=e.target.closest("button[data-copy]");if(!b)return;copy(b,plain(b.closest(".block").querySelector(".say").innerHTML))});
+$("gctx").addEventListener("click",e=>{if(e.target.closest("[data-clear]")){CTX=null;renderGuide()}});
+$("me").value=meName();$("me").addEventListener("input",()=>{try{localStorage.setItem("pcd_me",$("me").value)}catch(e){}renderGuide()});
+renderGuide();
+
+// ---------- Add ----------
+$("addForm").addEventListener("submit",async e=>{e.preventDefault();const name=$("aCompany").value.trim();
+  if(!name){$("addMsg").textContent="Enter a company name first.";return}
+  if(!db){$("addMsg").textContent="The desk is still loading. Try again in a moment.";return}
+  const id=(name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,50)||"lead")+"-"+Date.now().toString(36);
+  const t=today();
+  try{const r=await api("create",{lead:{id,company:name,type:$("aType").value,city:$("aCity").value.trim(),area:"",phone:$("aPhone").value.trim(),email:$("aEmail").value.trim(),contact:$("aContact").value.trim(),note:"Added from the desk.",confirm:"",website:"",address:"",priority:1,step:1,status:"new",nextDue:t,start:t,notes:"",history:[],}});if(r.lead){LEADS.push(r.lead);renderStats();renderQueue()}
+    $("addMsg").textContent="Added to today's queue.";e.target.reset()}catch(err){$("addMsg").textContent=err&&err.code==="quota_exceeded"?"The desk is full. Close out old leads first.":"Couldn't add it. Try again."}});
+["aCompany"].forEach(id=>$(id).addEventListener("input",()=>$("addMsg").textContent=""));
+
+
+// ---------- Live call mode ----------
+let CALL=null, TIMER=null;
+const NODES={
+ start:{label:"Who picked up?",say:null,help:"Dial now. Tap what happened.",btns:[["Front desk or receptionist","desk","go"],["The decision maker","dm","go"],["Voicemail","vm"],["No answer","x_noanswer"],["Wrong or bad number","x_bad"]]},
+ desk:{label:"Front desk",sayKey:"desk",btns:[["They're transferring me","dm","go"],["The person isn't in","desk_out"],["Send me to voicemail","vm"],["They said not interested","lost"]]},
+ desk_out:{label:"Get a name and a time",say:"No problem. What's the best time to catch them? And could I get their name and email, so I can send a quick note?",fields:["Name","Email","Best time to call back"],btns:[["Got it, schedule a callback","callback","go"],["Leave a voicemail for them","vm"],["They wouldn't share","x_noanswer"]]},
+ dm:{label:"Decision maker opener",sayKey:"dm",btns:[["They're open, keep going","q","go"],["They raised an objection","obj"],["Call me back later","callback"],["Not interested","lost"]]},
+ q:{label:"Ask the questions",qs:true,help:"Ask one at a time. Write down what they say.",fields:["What they said"],btns:[["Next: how we work","pitch","go"],["They raised an objection","obj"]]},
+ pitch:{label:"How we work",sayKey:"pitch",btns:[["They asked about price","price"],["Next: the offer","offer","go"],["They raised an objection","obj"]]},
+ price:{label:"Pricing",sayKey:"price",plainSay:true,btns:[["Next: the offer","offer","go"],["Too expensive","obj"]]},
+ offer:{label:"The offer",sayKey:"offer",btns:[["Yes, let's do it","close","won"],["They raised an objection","obj"],["Not right now","callback"],["Send me info first","sendinfo"]]},
+ close:{label:"Close and book it",sayKey:"close",fields:["Date and time","Address or building","Contact name and email"],btns:[["Booked it","x_won","won"],["Send me info first","sendinfo"]]},
+ sendinfo:{label:"Send the info",say:"Happy to. I'll email you our service guide with our pricing right now. What's the best email? I'll follow up in a couple of days to answer any questions.",fields:["Email"],help:"Type their email, then tap Email the guide now. Tap Open in Gmail, check it and press Send. Then tap Info sent.",send:true,btns:[["Info sent, follow up in 2 days","x_followup2","go"]]},
+ callback:{label:"Set a callback",say:"No problem at all. When's a better time, this week or next? I'll call you then.",date:true,btns:[["Save the callback","x_callback","go"]]},
+ vm:{label:"Leave the voicemail",vmSay:true,help:"Keep it under 30 seconds. Say the number twice.",btns:[["Voicemail left","x_vm","go"],["Mailbox full or no voicemail","x_noanswer"]]},
+ obj:{label:"Which objection?",objs:true,btns:[]},
+ lost:{label:"End it kindly",say:"Totally understand, thank you for your time. If anything changes, we're at 561.556.5899. Have a great day!",btns:[["Not interested","x_lost"],["Asked us never to call again","x_dnc","stopb"]]}
+};
+function deskParts(g,T){return [["say",`Hi, this is <em>{me}</em> with Radiance Restore Cleaners, a local cleaning company. Who handles your ${g.vendor}? I'd love two minutes with them.`],
+  ["note","If they ask what it's about, say this:"],
+  ["say",`We work with ${T.lc} from Jupiter to Coral Springs, and I wanted to see if <em>{company}</em> could use a reliable cleaning partner.`],
+  ["note","If the person isn't in, say this:"],
+  ["say","No problem. What's the best time to catch them? And could I get their name and email, so I can send a quick note?"]]}
+function sayFor(node,l){const g=G[l.type],T=TYPES[l.type];
+  if(node.sayKey==="desk")return deskParts(g,T).slice(0,3).map(([k,t])=>k==="say"?sayBox(fill(t,l)):noteBox(esc(t))).join("");
+  if(node.sayKey==="price")return sayBox(esc(g.price),"Say out loud only if they ask about price");
+  if(node.sayKey)return sayBox(fill(g[node.sayKey],l));
+  if(node.vmSay){const s=l.step||1;const k=s>=6?"vm3":s>=4?"vm2":"vm1";return sayBox(fill(g[k],l),"Say into their voicemail")}
+  return node.say?sayBox(fill(esc(node.say),l)):""}
+function openCall(l){CALL={lead:l,node:"start",stack:[],fields:{},started:Date.now()};$("callPanel").hidden=false;document.body.style.overflow="hidden";renderCall();
+  clearInterval(TIMER);TIMER=setInterval(()=>{const el=$("ctimer");if(el&&CALL){const s=Math.floor((Date.now()-CALL.started)/1000);el.textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}},1000)}
+function closeCall(){CALL=null;clearInterval(TIMER);$("callPanel").hidden=true;$("callPanel").innerHTML="";document.body.style.overflow=""}
+function keepFields(){if(!CALL)return;$("callPanel").querySelectorAll("[data-field]").forEach(i=>{CALL.fields[i.dataset.field]=i.value})}
+function renderCall(){const l=CALL.lead,n=NODES[CALL.node],g=G[l.type],{title}=stepInfo(l);
+  const say=n.objs?"":sayFor(n,l);
+  const fields=(n.fields||[]).map((f,i)=>`<label class="small muted" for="cf-${CALL.node}-${i}">${esc(f)}</label><input type="text" id="cf-${CALL.node}-${i}" data-field="${esc(f)}" value="${esc(CALL.fields[f]||"")}">`).join("");
+  const qs=n.qs?`<div class="speak">${tagHtml("say","Ask out loud, one at a time")}<ol class="q say">${g.q.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`:"";
+  const objs=n.objs?`<div class="bigbtns">${g.obj.concat(COMMON_OBJ.map(([q,a])=>[q,a.replace("{sendq}",g.sendq).replace("{incl}",g.incl).replace("{trial}",g.trial)])).map((o,i)=>`<button data-obj="${i}">${esc(o[0])}</button>`).join("")}</div>`:"";
+  const objAns=CALL.obj?`${noteBox("They said: <b>"+esc(CALL.obj[0])+"</b>")}${sayBox(fill(esc(CALL.obj[1]),l),"You say")}<div class="bigbtns"><button class="go" data-back>Back to where I was</button><button data-go="lost">Still not interested</button></div>`:"";
+  const date=n.date?`<label class="small muted" for="cdate">Call back on</label><input type="date" id="cdate" value="${addDays(today(),3)}">`:"";
+  const path=["start","desk","dm","q","pitch","offer","close"],pi=path.indexOf(CALL.node);
+  $("callPanel").innerHTML=`<div class="callinner">
+   <div class="callhead"><div style="min-width:0"><b>${esc(l.company)}</b><div class="meta">${esc(l.phone)} · ${TYPES[l.type].one} · ${esc(title)}</div></div><div class="row"><span class="pill st-talk" id="ctimer">0:00</span><button data-exit>Exit</button></div></div>
+   ${CALL.node==="start"?`<div class="panel"><div class="dial">${l.phone?`<a class="dialbtn" href="tel:${esc(e164(l.phone))}">${IC.phone}Call in Quo</a><button data-copynum>Copy number</button>`:"<b>No phone number on file.</b>"}</div>${noteBox("Quo rings out from the business line, 561.556.5899. If Quo doesn't open, tap Copy number and paste it into the Quo app.")}</div>`:`<div class="dial"><a class="small" href="tel:${esc(e164(l.phone))}">Redial ${esc(l.phone)} in Quo</a></div>`}
+   ${pi>=0?`<div class="progress">${path.map((p,i)=>`<span class="${i<=pi?"on":""}"></span>`).join("")}</div>`:""}
+   <div class="panel">
+     <span class="label">${esc(n.label)}</span>
+     ${say&&!CALL.obj?say:""}
+     ${n.help?noteBox(esc(n.help)):""}
+     ${qs}${CALL.obj?"":objs}${objAns}
+     ${fields||date?`<div style="display:grid;gap:6px">${tagHtml("note","Write it down · for you only")}${fields}${date}</div>`:""}
+     ${n.send?`<div class="row"><button class="go" data-send>Email the guide now</button></div>`:""}
+   </div>
+   ${CALL.obj?"":`<div class="bigbtns">${n.btns.map(([t,to,cls])=>`<button class="${cls||""}" data-go="${to}">${esc(t)}</button>`).join("")}</div>`}
+   <div class="row">${CALL.stack.length?'<button data-back>Back</button>':""}<span class="small muted">${canWrite&&db?"The call is logged when you tap a final step.":"Logging is off in this view."}</span></div>
+   <div><label class="small muted" for="cnotes">Call notes</label><textarea id="cnotes" data-field="notes" placeholder="Anything worth remembering">${esc(CALL.fields.notes||"")}</textarea></div>
+  </div>`;
+  $("callPanel").scrollTop=0;
+}
+function callSummary(){const f=CALL.fields,parts=[];Object.entries(f).forEach(([k,v])=>{if(v&&v.trim())parts.push((k==="notes"?"":k+": ")+v.trim())});return parts.join(" · ")}
+async function finish(kind){keepFields();const l=LEADS.find(x=>x.id===CALL.lead.id)||CALL.lead,sum=callSummary(),t=today();
+  const notes=sum?((l.notes?l.notes+"\n":"")+nice(t)+": "+sum):(l.notes||"");
+  let patch;
+  if(kind==="x_noanswer")patch=advance(l,"No answer");
+  else if(kind==="x_vm")patch=advance(l,"Left voicemail");
+  else if(kind==="x_bad")patch={status:"bad",history:hpush(l,"Bad number")};
+  else if(kind==="x_lost")patch={status:"lost",history:hpush(l,"Not interested")};
+  else if(kind==="x_dnc")patch={status:"dnc",history:hpush(l,"Do not contact")};
+  else if(kind==="x_won")patch={status:"won",history:hpush(l,"Booked",sum)};
+  else if(kind==="x_followup2"){const d=addDays(t,2);patch={status:"talked",nextDue:d,history:hpush(l,"Talked, sent info, follow up "+nice(d))}}
+  else if(kind==="x_callback"){const d=($("cdate")&&$("cdate").value)||addDays(t,3);patch={status:"talked",nextDue:d,history:hpush(l,"Talked, call back "+nice(d))}}
+  patch.notes=notes;
+  const newEmail=(CALL.fields.Email||"").trim();if(newEmail&&!l.email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail))patch.email=newEmail;
+  const msg={x_noanswer:"Logged no answer. Next touch scheduled.",x_vm:"Voicemail logged."+((STEPS[(l.step||1)-1]||{}).email&&l.email?" Send the email from the call guide now.":""),x_bad:"Marked bad number.",x_lost:"Closed.",x_dnc:"Marked do not contact.",x_won:"Booked! Put it in Jobber.",x_followup2:"Follow up set for 2 days.",x_callback:"Callback saved."}[kind];
+  closeCall();
+  if(canWrite&&db)await save(l.id,patch,msg);else toast("Logging is off in this view.");
+}
+$("callPanel").addEventListener("click",e=>{if(!CALL)return;const b=e.target.closest("button");if(!b)return;keepFields();
+  if(b.hasAttribute("data-exit")){closeCall();return}
+  if(b.hasAttribute("data-copynum")){navigator.clipboard.writeText(e164(CALL.lead.phone)).then(()=>{b.textContent="Copied"},()=>{b.textContent=CALL.lead.phone});return}
+  if(b.hasAttribute("data-send")){const em=(CALL.fields.Email||"").trim();openSend(CALL.lead,{email:em,fromCall:true});return}
+  if(b.hasAttribute("data-back")){if(CALL.obj){CALL.obj=null;CALL.node=CALL.stack.pop()||"start"}else{CALL.node=CALL.stack.pop()||"start"}renderCall();return}
+  if(b.dataset.obj!==undefined){const g=G[CALL.lead.type];const all=g.obj.concat(COMMON_OBJ.map(([q,a])=>[q,a.replace("{sendq}",g.sendq).replace("{incl}",g.incl).replace("{trial}",g.trial)]));CALL.obj=all[+b.dataset.obj];renderCall();return}
+  const to=b.dataset.go;if(!to)return;
+  if(to.startsWith("x_")){finish(to);return}
+  if(CALL.obj){CALL.obj=null}
+  if(to==="obj"){CALL.stack.push(CALL.node);CALL.node="obj";renderCall();return}
+  CALL.stack.push(CALL.node);CALL.node=to;renderCall();
+});
+$("callPanel").addEventListener("input",e=>{const i=e.target.closest("[data-field]");if(i&&CALL)CALL.fields[i.dataset.field]=i.value});
+
+// ---------- Send the guide ----------
+const SITE_URL="https://www.radiancerestore.org";
+const GUIDES={
+ vr:{path:"/partner-guides/airbnb-vacation-rental.pdf",label:"Airbnb and vacation rental guide"},
+ pm:{path:"/partner-guides/property-managers.pdf",label:"Property managers guide"},
+ hoa:{path:"/partner-guides/condo-hoa.pdf",label:"Condo and HOA guide"},
+ cw:{path:"/partner-guides/coworking.pdf",label:"Coworking guide"},
+ ob:{path:"/partner-guides/office-buildings.pdf",label:"Office buildings guide"},
+ re:{path:"/partner-guides/real-estate.pdf",label:"Real estate agents guide"}
+};
+const TEMPLATES=[["email2","Email 2 · pricing and the guide"],["email1","Email 1 · first hello"],["email3","Email 3 · photos"],["breakup","Close the loop"]];
+let SEND=null;
+function e164(p){const d=String(p||"").replace(/\D/g,"");if(d.length===10)return"+1"+d;if(d.length===11&&d[0]==="1")return"+"+d;return d?"+"+d:""}
+const okEmail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const guideUrl=k=>GUIDES[k]?SITE_URL+GUIDES[k].path:"";
+function hiFix(t){return t.replace(/^Hi \[name\],/m,"Hi there,").replace(/^Hi \[name\]/m,"Hi there")}
+function emailParts(key,l,gk){const txt=hiFix(plain(fill(G[l.type][key],l)));const m=txt.match(/^Subject:\s*(.*)\n+([\s\S]*)$/);
+  let subject=m?m[1].trim():"",body=(m?m[2]:txt).trim();const url=guideUrl(gk);
+  if(url){const ps=body.split("\n\n");let i=ps.findIndex(p=>/service guide/i.test(p));
+    const line="Our service guide for "+TYPES[l.type].lc+": "+url;
+    if(i>=0)ps.splice(i+1,0,url);else ps.splice(Math.max(1,ps.length-1),0,line);body=ps.join("\n\n")}
+  return {subject,body}}
+function textFor(l,gk){const T=TYPES[l.type],url=guideUrl(gk);
+  const mid=url?`Here's our service guide for ${T.lc} with our full checklist and pricing: ${url}`:`Could I email you our service guide for ${T.lc}? It has our full checklist and pricing.`;
+  return hiFix(plain(fill(`Hi <em>{contact}</em>, it's <em>{me}</em> with Radiance Restore Cleaners. ${mid} Call or text 561.556.5899 anytime.`,l)))}
+function openSend(l,opt){const st=STEPS[(l.step||1)-1]||{};const key=st.kind==="email"&&st.email?st.email:"email2";
+  SEND={lead:l,fromCall:!!opt.fromCall,email:opt.email||l.email||"",key,gk:l.type,opened:false,copied:false};
+  $("sendPanel").hidden=false;if(!CALL)document.body.style.overflow="hidden";renderSend()}
+function closeSend(){SEND=null;$("sendPanel").hidden=true;$("sendPanel").innerHTML="";if(!CALL)document.body.style.overflow=""}
+function renderSend(){const l=SEND.lead,T=TYPES[l.type],ep=emailParts(SEND.key,l,SEND.gk),noName=!$("me").value.trim();
+  const gOpts=Object.entries(GUIDES).map(([k,v])=>`<option value="${k}"${k===SEND.gk?" selected":""}>${esc(v.label)}${k===l.type?" (matches this lead)":""}</option>`).join("")+`<option value="none"${SEND.gk==="none"?" selected":""}>No guide</option>`;
+  const tOpts=TEMPLATES.map(([k,v])=>`<option value="${k}"${k===SEND.key?" selected":""}>${esc(v)}</option>`).join("");
+  $("sendPanel").innerHTML=`<div class="callinner">
+   <div class="callhead"><div style="min-width:0"><b>Send the guide · ${esc(l.company)}</b><div class="meta">${esc(T.one)} · ${esc(l.city||"")}</div></div><button data-sclose>${CALL?"Back to the call":"Close"}</button></div>
+   ${noName?`<div class="status bad">Type your first name in <b>Your name in the scripts</b> at the top of the desk first, so the email is signed by you.</div>`:""}
+   <div class="panel">
+     <h3>Email with the guide link</h3>
+     ${noteBox("Open in Gmail opens a new email with everything filled in, including the link to the right guide. Check it, then press Send in Gmail. Be signed in to the business Gmail.")}
+     <div class="field"><label class="small muted" for="sTo">To</label><input type="email" id="sTo" value="${esc(SEND.email)}" placeholder="office@company.com"></div>
+     <div class="field"><label class="small muted" for="sGuide">Guide</label><select id="sGuide">${gOpts}</select></div>
+     <div class="field"><label class="small muted" for="sTpl">Email</label><select id="sTpl">${tOpts}</select></div>
+     <div class="field"><label class="small muted" for="sSubj">Subject</label><input type="text" id="sSubj" value="${esc(ep.subject)}"></div>
+     <div class="field"><label class="small muted" for="sBody">Message</label>${tagHtml("write","Send in writing · don't read out loud")}<textarea id="sBody">${esc(ep.body)}</textarea></div>
+     <div class="row"><a class="dialbtn" id="sGmail" target="_blank" rel="noopener">${IC.write}Open in Gmail</a><a class="btnlink" id="sMail">Open in my email app</a><a class="btnlink" id="sView" target="_blank" rel="noopener">See the guide</a></div>
+     <div class="row" id="sSentRow"${SEND.opened?"":" hidden"}><button class="won" data-sent>I sent it</button><span class="small muted">Tap this after you press Send in Gmail.</span></div>
+     <div id="sStatus" aria-live="polite"></div>
+     ${noteBox("Asked for our insurance certificate or W9? Tell Jackson and he sends it.")}
+   </div>
+   <div class="panel">
+     <h3>Text with the guide link</h3>
+     ${noteBox("Copy the text, paste it into Quo, and send it from 561.556.5899. Only text a number they publish for texts, or one a person gave you.")}
+     <div class="field"><label class="small muted" for="sPhone">To</label><input type="tel" id="sPhone" value="${esc(l.phone||"")}"></div>
+     <div class="field"><label class="small muted" for="sText">Text</label>${tagHtml("write","Send as a text · don't read out loud")}<textarea class="short" id="sText">${esc(textFor(l,SEND.gk))}</textarea></div>
+     <div class="row"><button class="go" data-copytext>Copy text</button><button data-copyphone>Copy number</button><button data-texted>I sent the text</button></div>
+     <div id="tStatus" aria-live="polite"></div>
+   </div></div>`;
+  syncLinks();$("sendPanel").scrollTop=0}
+function syncLinks(){if(!SEND)return;const to=$("sTo").value.trim(),su=$("sSubj").value,bo=$("sBody").value,g=GUIDES[$("sGuide").value];
+  $("sGmail").href="https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(to)+"&su="+encodeURIComponent(su)+"&body="+encodeURIComponent(bo);
+  $("sMail").href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent(su)+"&body="+encodeURIComponent(bo);
+  const v=$("sView");v.hidden=!g;if(g)v.href=g.path}
+function sStat(id,cls,html){const el=$(id);if(el)el.innerHTML=`<div class="status ${cls}">${html}</div>`}
+async function copyText(text,btn,done){try{await navigator.clipboard.writeText(text);btn.textContent=done}catch(e){btn.textContent="Select and copy it"}}
+$("sendPanel").addEventListener("click",e=>{if(!SEND)return;
+  const a=e.target.closest("a#sGmail,a#sMail");
+  if(a){const to=$("sTo").value.trim();
+    if(!$("me").value.trim()){e.preventDefault();sStat("sStatus","bad","Type your name at the top of the desk first.");return}
+    if(!okEmail(to)){e.preventDefault();sStat("sStatus","bad","Type a real email address in To.");return}
+    SEND.opened=true;SEND.email=to;$("sSentRow").hidden=false;sStat("sStatus","ok","Email opened. Check it, press Send, then tap I sent it.");
+    if(!SEND.lead.email&&canWrite&&db)save(SEND.lead.id,{email:to});return}
+  const b=e.target.closest("button");if(!b)return;
+  if(b.hasAttribute("data-sclose")){closeSend();return}
+  if(b.hasAttribute("data-copytext")){copyText($("sText").value,b,"Copied, paste it in Quo");return}
+  if(b.hasAttribute("data-copyphone")){copyText(e164($("sPhone").value),b,"Number copied");return}
+  if(b.hasAttribute("data-texted")){const l=LEADS.find(x=>x.id===SEND.lead.id)||SEND.lead;b.disabled=true;b.textContent="Logged";if(canWrite&&db)save(l.id,{history:hpush(l,"Texted the guide")},"Text logged.");return}
+  if(b.hasAttribute("data-sent")){const l=LEADS.find(x=>x.id===SEND.lead.id)||SEND.lead;const fromCall=SEND.fromCall;b.disabled=true;b.textContent="Logged";
+    if(canWrite&&db){const patch=fromCall||l.status==="talked"?{history:hpush(l,"Sent guide email")}:advance(l,"Sent guide email");save(l.id,patch,fromCall?"Email logged. Finish the call when you're ready.":"Logged. Next touch scheduled.")}
+    if(fromCall)closeSend();return}
+});
+$("sendPanel").addEventListener("change",e=>{if(!SEND)return;
+  if(e.target.id==="sTpl"||e.target.id==="sGuide"){SEND.key=$("sTpl").value;SEND.gk=$("sGuide").value;const ep=emailParts(SEND.key,SEND.lead,SEND.gk);$("sSubj").value=ep.subject;$("sBody").value=ep.body;$("sText").value=textFor(SEND.lead,SEND.gk)}
+  syncLinks()});
+$("sendPanel").addEventListener("input",e=>{if(!SEND)return;if(e.target.id==="sTo"){SEND.email=e.target.value.trim()}syncLinks()});
+
+// ---------- Data ----------
+const API_URL="/api/partner-desk";
+function deskCode(){try{return localStorage.getItem("pcd_code")||""}catch(e){return ""}}
+async function api(action,body){let r,j={};
+  try{r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","x-desk-code":deskCode()},body:JSON.stringify({action,...(body||{})})})}
+  catch(e){throw {code:"offline",message:"No internet connection. Try again."}}
+  try{j=await r.json()}catch(e){}
+  if(r.status===401){showGate();throw {code:"bad_code",message:"Enter the desk code first."}}
+  if(!r.ok||!j.ok)throw {code:"err",message:j.error||"The desk couldn't save that. Try again."};
+  return j}
+function showGate(){const n=$("dbNote");n.hidden=false;
+  n.innerHTML=`<p><b>Enter the desk code</b> Jackson gave you. You only do this once on this device.</p><div class="row"><input type="password" id="gateCode" autocomplete="current-password" aria-label="Desk code" style="max-width:220px"><button class="go" id="gateGo">Open the desk</button></div>`;
+  $("gateGo").onclick=()=>{try{localStorage.setItem("pcd_code",$("gateCode").value.trim())}catch(e){}load()}}
+async function load(){
+  try{const j=await api("list");LEADS=j.leads||[];db=true;$("dbNote").hidden=true;
+    if(CTX){CTX=LEADS.find(x=>x.id===CTX.id)||CTX}
+    if(!LEADS.length){$("cards").innerHTML='<div class="panel"><p class="muted">No leads yet. Load the lead list file Jackson sent you, or add a lead below.</p><div class="row"><button class="go" data-import>Load a lead list file</button></div></div>'}
+    renderStats();renderQueue()}
+  catch(e){if(e.code!=="bad_code"){$("dbNote").hidden=false;$("dbNote").innerHTML="<p>Couldn't load the leads. Check your internet, then reload the page.</p>"}}}
+const importer=document.createElement("input");importer.type="file";importer.accept=".json,application/json";importer.hidden=true;document.body.appendChild(importer);
+document.addEventListener("click",e=>{if(e.target.closest("[data-import]"))importer.click()});
+importer.addEventListener("change",async()=>{const f=importer.files[0];importer.value="";if(!f)return;
+  try{const data=JSON.parse(await f.text());const leads=Array.isArray(data)?data:data.leads;if(!Array.isArray(leads))throw 0;
+    const j=await api("import",{leads});toast(j.added+" leads loaded"+(j.skipped?", "+j.skipped+" already here":""));load()}
+  catch(e){toast(e&&e.message?e.message:"That file isn't a lead list.")}});
+function busy(){const a=document.activeElement;return !!(CALL||SEND||(a&&a.matches&&a.matches("textarea,input,select")))}
+setInterval(()=>{if(!document.hidden&&!busy())load()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!busy())load()});
+load();
+renderStats();
+</script>
+</body>
+</html>
